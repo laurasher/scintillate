@@ -1,9 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { D3Chart } from './d3-chart/d3-chart';
 
 @Component({
   selector: 'app-root',
-  imports: [D3Chart],
+  imports: [],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
