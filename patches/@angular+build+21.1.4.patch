@@ -1,0 +1,13 @@
+diff --git a/node_modules/@angular/build/src/builders/dev-server/vite/index.js b/node_modules/@angular/build/src/builders/dev-server/vite/index.js
+index 64a5c13..2215114 100755
+--- a/node_modules/@angular/build/src/builders/dev-server/vite/index.js
++++ b/node_modules/@angular/build/src/builders/dev-server/vite/index.js
+@@ -145,7 +145,7 @@ async function* serveWithVite(serverOptions, builderName, builderAction, context
+     { sourcemap: true, jit: true, thirdPartySourcemaps }, 1);
+     // The index HTML path will be updated from the build results if provided by the builder
+     let htmlIndexPath = 'index.html';
+-    const { createServer, normalizePath } = await Promise.resolve().then(() => __importStar(require('vite')));
++    const { createServer, normalizePath } = await import('vite');
+     let server;
+     let serverUrl;
+     let hadError = false;
