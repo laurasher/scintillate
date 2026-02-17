@@ -8,6 +8,9 @@ import * as d3 from 'd3';
   styleUrl: './d3-chart.css',
 })
 export class D3Chart implements OnInit {
+  private readonly CHART_WIDTH = 500;
+  private readonly CHART_HEIGHT = 300;
+  
   private data = [
     { name: 'A', value: 30 },
     { name: 'B', value: 80 },
@@ -26,8 +29,8 @@ export class D3Chart implements OnInit {
   private createChart(): void {
     const element = this.elementRef.nativeElement;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = 500 - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    const width = this.CHART_WIDTH - margin.left - margin.right;
+    const height = this.CHART_HEIGHT - margin.top - margin.bottom;
 
     // Create SVG
     const svg = d3
