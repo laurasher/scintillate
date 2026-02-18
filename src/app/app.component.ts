@@ -49,6 +49,18 @@ export class AppComponent implements OnInit, OnDestroy {
     // Create defs for gradients
     const defs = svg.append('defs');
 
+    // Create blur filter for smooth edges
+    const filter = defs.append('filter')
+      .attr('id', 'edgeBlur')
+      .attr('x', '-50%')
+      .attr('y', '0%')
+      .attr('width', '200%')
+      .attr('height', '100%');
+
+    filter.append('feGaussianBlur')
+      .attr('in', 'SourceGraphic')
+      .attr('stdDeviation', '20,0');
+
     // Create background gradient (315deg angle)
     const bgGradient = defs.append('linearGradient')
       .attr('id', 'backgroundGradient')
@@ -105,11 +117,11 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', i * rectWidth)
         .attr('y', 0)
-      .attr('opacity', 0.5)
         .attr('opacity', 0.5)
         .attr('width', rectWidth)
         .attr('height', height)
-        .attr('fill', `url(#gradient${i})`);
+        .attr('fill', `url(#gradient${i})`)
+        .attr('filter', 'url(#edgeBlur)');
     }
 
     // Create 3 rectangles on the right side
@@ -120,7 +132,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('opacity', 0.5)
         .attr('width', rectWidth)
         .attr('height', height)
-        .attr('fill', `url(#gradient${i + 3})`);
+        .attr('fill', `url(#gradient${i + 3})`)
+        .attr('filter', 'url(#edgeBlur)');
     }
   }
 
