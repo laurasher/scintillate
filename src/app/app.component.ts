@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const rectWidth = width * 0.15;
+    const rectWidth = width * 0.1;
 
     // Create SVG container
     const svg = d3.select('#d3-container')
@@ -117,7 +117,7 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', i * rectWidth)
         .attr('y', 0)
-        .attr('opacity', 0.5)
+        .attr('opacity', 0.25)
         .attr('width', rectWidth)
         .attr('height', height)
         .attr('fill', `url(#gradient${i})`)
