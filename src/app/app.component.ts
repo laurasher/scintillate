@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
+  private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -30,6 +31,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.animationActive = false;
+    
+    // Clear any pending color cycle timeouts
+    this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    this.colorCycleTimeouts = [];
+    
+    // Cancel any active D3 transitions
+    if (isPlatformBrowser(this.platformId)) {
+      d3.selectAll('stop').interrupt();
+    }
+    
     if (isPlatformBrowser(this.platformId) && this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
     }
@@ -38,6 +49,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private createVisualization() {
     // Remove any existing SVG
     d3.select('#d3-container').selectAll('svg').remove();
+    
+    // Clear existing timeouts and reset array
+    this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    this.colorCycleTimeouts = [];
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -209,7 +224,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const delay = gradientIndex * 1000; // 1 second stagger between gradients
     const cycleDuration = 8000; // 8 seconds for smooth color transition
     
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       const animateColors = () => {
         if (!this.animationActive) return;
         
@@ -235,7 +250,10 @@ export class AppComponent implements OnInit, OnDestroy {
       };
       
       animateColors();
-    }, delay);
+    }, delay) as unknown as number;
+    
+    // Track timeout for cleanup
+    this.colorCycleTimeouts.push(timeoutId);
   }
 
   private getRandomColor(): string {
