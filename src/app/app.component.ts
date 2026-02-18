@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('id', 'edgeBlur')
       .attr('x', '-50%')
       .attr('y', '0%')
-      .attr('width', '200%')
+      .attr('width', '550%')
       .attr('height', '100%');
 
     filter.append('feGaussianBlur')
