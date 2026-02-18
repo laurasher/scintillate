@@ -52,7 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Create blur filter for smooth edges
     const filter = defs.append('filter')
       .attr('id', 'edgeBlur')
-      .attr('x', '-50%')
+      .attr('x', '-250%')
       .attr('y', '0%')
       .attr('width', '550%')
       .attr('height', '100%');
