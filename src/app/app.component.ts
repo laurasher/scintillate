@@ -95,6 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
     svg.append('rect')
       .attr('x', 0)
       .attr('y', 0)
+      // .attr('opacity', 0.5)
       .attr('width', width)
       .attr('height', height)
       .attr('fill', 'url(#backgroundGradient)');
@@ -104,6 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', i * rectWidth)
         .attr('y', 0)
+      .attr('opacity', 0.5)
         .attr('opacity', 0.5)
         .attr('width', rectWidth)
         .attr('height', height)
