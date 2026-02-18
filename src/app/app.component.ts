@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import * as d3 from 'd3';
 
 @Component({
@@ -14,14 +15,19 @@ export class AppComponent implements OnInit, OnDestroy {
   private resizeListener: any;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngOnInit() {
-    this.createVisualization();
-    this.resizeListener = () => this.onResize();
-    window.addEventListener('resize', this.resizeListener);
+    // Only run d3 visualization in the browser
+    if (isPlatformBrowser(this.platformId)) {
+      this.createVisualization();
+      this.resizeListener = () => this.onResize();
+      window.addEventListener('resize', this.resizeListener);
+    }
   }
 
   ngOnDestroy() {
-    if (this.resizeListener) {
+    if (isPlatformBrowser(this.platformId) && this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
     }
   }
