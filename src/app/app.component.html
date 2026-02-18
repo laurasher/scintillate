@@ -10,5 +10,5 @@
     [value]="animationSpeed"
     (input)="onSpeedChange($event)"
   />
-  <span class="speed-value">{{animationSpeed.toFixed(1)}}x</span>
+  <span class="speed-value">{{(animationSpeed || 1).toFixed(1)}}x</span>
 </div>

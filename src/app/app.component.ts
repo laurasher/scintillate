@@ -209,8 +209,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onSpeedChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.animationSpeed = parseFloat(input.value);
-    // Recreate visualization with new speed
-    this.createVisualization();
+    const newSpeed = parseFloat(input.value);
+    // Prevent division by zero or negative values
+    if (newSpeed > 0) {
+      this.animationSpeed = newSpeed;
+      // Recreate visualization with new speed
+      this.createVisualization();
+    }
   }
 }
