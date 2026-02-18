@@ -90,4 +90,37 @@ body {
     min-width: 40px;
     text-align: right;
 }
+
+.trigger-button {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #63A8AF;
+    padding: 20px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #63A8AF;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.trigger-button:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.trigger-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.center-rectangle {
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
   

@@ -12,3 +12,9 @@
   />
   <span class="speed-value">{{(animationSpeed || 1).toFixed(1)}}x</span>
 </div>
+<button 
+  *ngIf="rectangleState === 'hidden'" 
+  class="trigger-button" 
+  (click)="onTriggerRectangle()">
+  Show Rectangle
+</button>

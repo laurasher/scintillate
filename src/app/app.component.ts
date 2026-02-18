@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.less'
 })
@@ -16,6 +16,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
+  rectangleState: 'hidden' | 'emerging' | 'centered' | 'dissolving' = 'hidden';
+  private centerRect: any = null;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -216,5 +218,78 @@ export class AppComponent implements OnInit, OnDestroy {
       // Recreate visualization with new speed
       this.createVisualization();
     }
+  }
+
+  onTriggerRectangle() {
+    if (this.rectangleState === 'hidden') {
+      this.rectangleState = 'emerging';
+      this.emergeRectangle();
+    }
+  }
+
+  private emergeRectangle() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const rectWidth = width * 0.3;
+    const rectHeight = height * 0.4;
+    const centerX = (width - rectWidth) / 2;
+    const centerY = (height - rectHeight) / 2;
+
+    const svg = d3.select('#d3-container svg');
+
+    // Create the white rectangle with rounded corners
+    this.centerRect = svg.append('rect')
+      .attr('class', 'center-rectangle')
+      .attr('x', 0)
+      .attr('y', centerY)
+      .attr('width', 0)
+      .attr('rx', 20)
+      .attr('ry', 20)
+      .attr('height', rectHeight)
+      .attr('fill', 'white')
+      .attr('opacity', 0)
+      .style('cursor', 'pointer')
+      .on('click', () => this.onCenterRectangleClick());
+
+    // Animate emergence from left side to center
+    this.centerRect
+      .transition()
+      .duration(1500)
+      .ease(d3.easeCubicOut)
+      .attr('x', centerX)
+      .attr('width', rectWidth)
+      .attr('opacity', 0.9)
+      .on('end', () => {
+        this.rectangleState = 'centered';
+      });
+  }
+
+  private onCenterRectangleClick() {
+    if (this.rectangleState === 'centered') {
+      this.rectangleState = 'dissolving';
+      this.dissolveRectangle();
+    }
+  }
+
+  private dissolveRectangle() {
+    if (!this.centerRect) return;
+
+    const width = window.innerWidth;
+    const currentX = parseFloat(this.centerRect.attr('x'));
+    const currentWidth = parseFloat(this.centerRect.attr('width'));
+
+    // Animate dissolution to right side
+    this.centerRect
+      .transition()
+      .duration(1500)
+      .ease(d3.easeCubicIn)
+      .attr('x', width)
+      .attr('width', 0)
+      .attr('opacity', 0)
+      .on('end', () => {
+        this.centerRect.remove();
+        this.centerRect = null;
+        this.rectangleState = 'hidden';
+      });
   }
 }
