@@ -17,7 +17,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationActive = true;
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   rectangleState: 'hidden' | 'emerging' | 'centered' | 'dissolving' = 'hidden';
-  private centerRect: any = null;
+  private centerRect: d3.Selection<SVGRectElement, unknown, HTMLElement, any> | null = null;
+  private readonly D3_CONTAINER_SELECTOR = '#d3-container';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -39,14 +40,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private createVisualization() {
     // Remove any existing SVG
-    d3.select('#d3-container').selectAll('svg').remove();
+    d3.select(this.D3_CONTAINER_SELECTOR).selectAll('svg').remove();
 
     const width = window.innerWidth;
     const height = window.innerHeight;
     const rectWidth = width * 0.1;
 
     // Create SVG container
-    const svg = d3.select('#d3-container')
+    const svg = d3.select(this.D3_CONTAINER_SELECTOR)
       .append('svg')
       .attr('width', width)
       .attr('height', height);
@@ -235,7 +236,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const centerX = (width - rectWidth) / 2;
     const centerY = (height - rectHeight) / 2;
 
-    const svg = d3.select('#d3-container svg');
+    const svg = d3.select(`${this.D3_CONTAINER_SELECTOR} svg`);
 
     // Create the white rectangle with rounded corners
     this.centerRect = svg.append('rect')
@@ -275,11 +276,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!this.centerRect) return;
 
     const width = window.innerWidth;
-    const currentX = parseFloat(this.centerRect.attr('x'));
-    const currentWidth = parseFloat(this.centerRect.attr('width'));
+    const rect = this.centerRect;
 
     // Animate dissolution to right side
-    this.centerRect
+    rect
       .transition()
       .duration(1500)
       .ease(d3.easeCubicIn)
@@ -287,7 +287,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('width', 0)
       .attr('opacity', 0)
       .on('end', () => {
-        this.centerRect.remove();
+        rect.remove();
         this.centerRect = null;
         this.rectangleState = 'hidden';
       });
