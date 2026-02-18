@@ -80,6 +80,7 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', i * rectWidth)
         .attr('y', 0)
+        .attr('opacity', 0.5)
         .attr('width', rectWidth)
         .attr('height', height)
         .attr('fill', `url(#gradient${i})`);
@@ -90,6 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', width - (3 - i) * rectWidth)
         .attr('y', 0)
+        .attr('opacity', 0.5)
         .attr('width', rectWidth)
         .attr('height', height)
         .attr('fill', `url(#gradient${i + 3})`);
