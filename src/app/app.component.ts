@@ -14,6 +14,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'scintillate';
   private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
+  private animationActive = true;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.animationActive = false;
     if (isPlatformBrowser(this.platformId) && this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
     }
@@ -114,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Create 3 rectangles on the left side
     for (let i = 3; i >= 0; i--) {
-      svg.append('rect')
+      const rect = svg.append('rect')
         .attr('x',  0)
         .attr('y', 0)
         .attr('opacity', 0.3)
@@ -122,20 +124,74 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('height', height)
         .attr('fill', `url(#gradient${i})`)
         .attr('filter', 'url(#edgeBlur)');
+      
+      // Animate the width to create vacillating effect
+      if (i > 0) {
+        this.animateLeftRectangle(rect, i, rectWidth);
+      }
     }
 
     // Create 3 rectangles on the right side
     for (let i = 0; i < 3; i++) {
       const xPosition = width - (3 - i) * rectWidth;
-      svg.append('rect')
+      const rect = svg.append('rect')
         .attr('x', xPosition)
         .attr('y', 0)
         .attr('opacity', 0.3)
-        .attr('width', width - (3 - i) * rectWidth)
+        .attr('width', width - xPosition)
         .attr('height', height)
         .attr('fill', `url(#gradient${i + 3})`)
         .attr('filter', 'url(#edgeBlur)');
+      
+      // Animate the x position and width to create vacillating effect
+      this.animateRightRectangle(rect, width, (3 - i), rectWidth);
     }
+  }
+
+  private animateLeftRectangle(rect: any, index: number, rectWidth: number) {
+    const baseWidth = index * rectWidth;
+    const oscillationAmount = rectWidth * 0.15; // 15% oscillation
+    const duration = 3000 + (index * 500); // Meditative speed, slightly different for each layer
+    
+    const animate = () => {
+      if (!this.animationActive) return;
+      
+      rect.transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('width', baseWidth + oscillationAmount)
+        .transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('width', baseWidth - oscillationAmount)
+        .on('end', animate);
+    };
+    
+    animate();
+  }
+
+  private animateRightRectangle(rect: any, width: number, multiplier: number, rectWidth: number) {
+    const baseX = width - multiplier * rectWidth;
+    const oscillationAmount = rectWidth * 0.15; // 15% oscillation
+    const duration = 3000 + (multiplier * 500); // Meditative speed, slightly different for each layer
+    
+    const animate = () => {
+      if (!this.animationActive) return;
+      
+      rect.transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('x', baseX - oscillationAmount)
+        .attr('width', width - (baseX - oscillationAmount))
+        .transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('x', baseX + oscillationAmount)
+        .attr('width', width - (baseX + oscillationAmount))
+        .on('end', animate);
+    };
+    
+    animate();
   }
 
   private getRandomColor(): string {

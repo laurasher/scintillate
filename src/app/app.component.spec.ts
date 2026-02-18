@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('scintillate');
   });
 
-  it('should render title', () => {
+  it('should render d3 container', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, scintillate');
+    expect(compiled.querySelector('#d3-container')).toBeTruthy();
   });
 });
