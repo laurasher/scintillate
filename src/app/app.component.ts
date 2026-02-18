@@ -49,6 +49,22 @@ export class AppComponent implements OnInit, OnDestroy {
     // Create defs for gradients
     const defs = svg.append('defs');
 
+    // Create background gradient (315deg angle)
+    const bgGradient = defs.append('linearGradient')
+      .attr('id', 'backgroundGradient')
+      .attr('x1', '0%')
+      .attr('y1', '100%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    bgGradient.append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#CDC1D2');
+
+    bgGradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#B7C5E8');
+
     // Function to create a gradient with random colors
     const createGradient = (id: string) => {
       const gradient = defs.append('linearGradient')
@@ -74,6 +90,14 @@ export class AppComponent implements OnInit, OnDestroy {
     for (let i = 0; i < 6; i++) {
       createGradient(`gradient${i}`);
     }
+
+    // Add background rectangle first (so it's behind everything else)
+    svg.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', 'url(#backgroundGradient)');
 
     // Create 3 rectangles on the left side
     for (let i = 0; i < 3; i++) {
