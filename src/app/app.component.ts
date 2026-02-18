@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('stop-color', '#B7C5E8');
 
     // Function to create a gradient with random colors
-    const createGradient = (id: string) => {
+    const createGradient = (id: string, index: number) => {
       const gradient = defs.append('linearGradient')
         .attr('id', id)
         .attr('x1', '0%')
@@ -93,17 +93,22 @@ export class AppComponent implements OnInit, OnDestroy {
       const color2 = this.getRandomColor();
 
       gradient.append('stop')
+        .attr('class', `stop-0-${index}`)
         .attr('offset', '0%')
         .attr('stop-color', color1);
 
       gradient.append('stop')
+        .attr('class', `stop-1-${index}`)
         .attr('offset', '100%')
         .attr('stop-color', color2);
+      
+      // Start color cycling animation for this gradient
+      this.cycleGradientColors(index);
     };
 
     // Create gradients for all rectangles
     for (let i = 0; i < 6; i++) {
-      createGradient(`gradient${i}`);
+      createGradient(`gradient${i}`, i);
     }
 
     // Add background rectangle first (so it's behind everything else)
@@ -197,6 +202,40 @@ export class AppComponent implements OnInit, OnDestroy {
     };
     
     animate();
+  }
+
+  private cycleGradientColors(gradientIndex: number) {
+    // Stagger the start time for each gradient for visual variety
+    const delay = gradientIndex * 1000; // 1 second stagger between gradients
+    const cycleDuration = 8000; // 8 seconds for smooth color transition
+    
+    setTimeout(() => {
+      const animateColors = () => {
+        if (!this.animationActive) return;
+        
+        // Select gradient stops
+        const stop0 = d3.select(`.stop-0-${gradientIndex}`);
+        const stop1 = d3.select(`.stop-1-${gradientIndex}`);
+        
+        // Get new colors to transition to
+        const newColor1 = this.getRandomColor();
+        const newColor2 = this.getRandomColor();
+        
+        // Smoothly transition both gradient stops to new colors
+        stop0.transition()
+          .duration(cycleDuration)
+          .ease(d3.easeLinear)
+          .attr('stop-color', newColor1);
+        
+        stop1.transition()
+          .duration(cycleDuration)
+          .ease(d3.easeLinear)
+          .attr('stop-color', newColor2)
+          .on('end', animateColors); // Continue cycling after transition completes
+      };
+      
+      animateColors();
+    }, delay);
   }
 
   private getRandomColor(): string {
