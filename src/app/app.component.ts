@@ -210,8 +210,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const animate = () => {
       if (!this.animationActive) return;
       
-      // Increment wave phase for gentle undulation
-      wavePhase += 0.3;
+      // Increment wave phase for gentle undulation (keep within 0-2π range)
+      wavePhase = (wavePhase + 0.3) % (Math.PI * 2);
       
       rect.transition()
         .duration(duration)
@@ -249,8 +249,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const animate = () => {
       if (!this.animationActive) return;
       
-      // Increment wave phase for gentle undulation
-      wavePhase += 0.3;
+      // Increment wave phase for gentle undulation (keep within 0-2π range)
+      wavePhase = (wavePhase + 0.3) % (Math.PI * 2);
       
       rect.transition()
         .duration(duration)
