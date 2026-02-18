@@ -113,12 +113,12 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('fill', 'url(#backgroundGradient)');
 
     // Create 3 rectangles on the left side
-    for (let i = 0; i < 3; i++) {
+    for (let i = 3; i >= 0; i--) {
       svg.append('rect')
-        .attr('x', i * rectWidth)
+        .attr('x',  0)
         .attr('y', 0)
-        .attr('opacity', 0.25)
-        .attr('width', rectWidth)
+        .attr('opacity', 0.3)
+        .attr('width', (i) * rectWidth)
         .attr('height', height)
         .attr('fill', `url(#gradient${i})`)
         .attr('filter', 'url(#edgeBlur)');
@@ -129,8 +129,8 @@ export class AppComponent implements OnInit, OnDestroy {
       svg.append('rect')
         .attr('x', width - (3 - i) * rectWidth)
         .attr('y', 0)
-        .attr('opacity', 0.5)
-        .attr('width', rectWidth)
+        .attr('opacity', 0.3)
+        .attr('width', width - (3 - i) * rectWidth)
         .attr('height', height)
         .attr('fill', `url(#gradient${i + 3})`)
         .attr('filter', 'url(#edgeBlur)');
