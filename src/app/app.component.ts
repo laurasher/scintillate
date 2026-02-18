@@ -14,6 +14,8 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'scintillate';
   private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
+  private animationActive = true;
+  animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.animationActive = false;
     if (isPlatformBrowser(this.platformId) && this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
     }
@@ -112,9 +115,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('height', height)
       .attr('fill', 'url(#backgroundGradient)');
 
-    // Create 3 rectangles on the left side
+    // Create 3 rectangles on the left side (widest to narrowest)
     for (let i = 3; i >= 0; i--) {
-      svg.append('rect')
+      const rect = svg.append('rect')
         .attr('x',  0)
         .attr('y', 0)
         .attr('opacity', 0.3)
@@ -122,20 +125,78 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('height', height)
         .attr('fill', `url(#gradient${i})`)
         .attr('filter', 'url(#edgeBlur)');
+      
+      // Animate the width to create vacillating effect (skip i=0 which has no width)
+      if (i > 0) {
+        this.animateLeftRectangle(rect, i, rectWidth);
+      }
     }
 
     // Create 3 rectangles on the right side
     for (let i = 0; i < 3; i++) {
-      const xPosition = width - (3 - i) * rectWidth;
-      svg.append('rect')
+      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
+      const multiplier = 3 - i;
+      const xPosition = width - multiplier * rectWidth;
+      const rect = svg.append('rect')
         .attr('x', xPosition)
         .attr('y', 0)
         .attr('opacity', 0.3)
-        .attr('width', width - (3 - i) * rectWidth)
+        .attr('width', width - xPosition)
         .attr('height', height)
         .attr('fill', `url(#gradient${i + 3})`)
         .attr('filter', 'url(#edgeBlur)');
+      
+      // Animate the x position and width to create vacillating effect
+      this.animateRightRectangle(rect, width, multiplier, rectWidth);
     }
+  }
+
+  private animateLeftRectangle(rect: any, index: number, rectWidth: number) {
+    const baseWidth = index * rectWidth;
+    const oscillationAmount = rectWidth * 0.15; // 15% oscillation
+    const baseDuration = 1500 + (index * 250); // Faster base speed, slightly different for each layer
+    const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
+    
+    const animate = () => {
+      if (!this.animationActive) return;
+      
+      rect.transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('width', baseWidth + oscillationAmount)
+        .transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('width', baseWidth - oscillationAmount)
+        .on('end', animate);
+    };
+    
+    animate();
+  }
+
+  private animateRightRectangle(rect: any, width: number, multiplier: number, rectWidth: number) {
+    const baseX = width - multiplier * rectWidth;
+    const oscillationAmount = rectWidth * 0.15; // 15% oscillation
+    const baseDuration = 1500 + (multiplier * 250); // Faster base speed, slightly different for each layer
+    const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
+    
+    const animate = () => {
+      if (!this.animationActive) return;
+      
+      rect.transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('x', baseX - oscillationAmount)
+        .attr('width', width - (baseX - oscillationAmount))
+        .transition()
+        .duration(duration)
+        .ease(d3.easeSinInOut)
+        .attr('x', baseX + oscillationAmount)
+        .attr('width', width - (baseX + oscillationAmount))
+        .on('end', animate);
+    };
+    
+    animate();
   }
 
   private getRandomColor(): string {
@@ -144,5 +205,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private onResize() {
     this.createVisualization();
+  }
+
+  onSpeedChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const newSpeed = parseFloat(input.value);
+    // Prevent division by zero or negative values
+    if (newSpeed > 0) {
+      this.animationSpeed = newSpeed;
+      // Recreate visualization with new speed
+      this.createVisualization();
+    }
   }
 }
