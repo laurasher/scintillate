@@ -210,8 +210,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const animate = () => {
       if (!this.animationActive) return;
       
-      // Increment wave phase for gentle undulation (keep within 0-2π range)
-      wavePhase = (wavePhase + 0.3) % (Math.PI / 1.5);
+      // Store the starting phase for this cycle
+      const startPhase = wavePhase;
       
       rect.transition()
         .duration(duration)
@@ -219,7 +219,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = wavePhase + t * 0.5;
+            const currentPhase = startPhase + t * 0.5;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
@@ -229,11 +229,15 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount - (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = wavePhase + 0.5 + t * 0.5;
+            const currentPhase = startPhase + 0.5 + t * 0.5;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
-        .on('end', animate);
+        .on('end', () => {
+          // Update phase to continue smoothly from where we ended (keep within reasonable range)
+          wavePhase = (startPhase + 1.0) % (Math.PI * 2);
+          animate();
+        });
     };
     
     animate();
@@ -249,8 +253,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const animate = () => {
       if (!this.animationActive) return;
       
-      // Increment wave phase for gentle undulation (keep within 0-2π range)
-      wavePhase = (wavePhase + 0.3) % (Math.PI / 1.5);
+      // Store the starting phase for this cycle
+      const startPhase = wavePhase;
       
       rect.transition()
         .duration(duration)
@@ -258,7 +262,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = wavePhase + t * 0.5;
+            const currentPhase = startPhase + t * 0.5;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
@@ -268,11 +272,15 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount + (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = wavePhase + 0.5 + t * 0.5;
+            const currentPhase = startPhase + 0.5 + t * 0.5;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
-        .on('end', animate);
+        .on('end', () => {
+          // Update phase to continue smoothly from where we ended (keep within reasonable range)
+          wavePhase = (startPhase + 1.0) % (Math.PI * 2);
+          animate();
+        });
     };
     
     animate();
