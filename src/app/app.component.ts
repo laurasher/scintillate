@@ -162,7 +162,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Right edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 2 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
       const x = width + wave;
       path += ` L ${x},${y}`;
     }
@@ -184,7 +184,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Left edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 2 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
       const x = xPosition + wave;
       if (i === 0) {
         path += `M ${x},${y}`; // Start point
@@ -211,7 +211,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!this.animationActive) return;
       
       // Increment wave phase for gentle undulation (keep within 0-2π range)
-      wavePhase = (wavePhase + 0.3) % (Math.PI * 2);
+      wavePhase = (wavePhase + 0.3) % (Math.PI / 1.5);
       
       rect.transition()
         .duration(duration)
@@ -250,7 +250,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!this.animationActive) return;
       
       // Increment wave phase for gentle undulation (keep within 0-2π range)
-      wavePhase = (wavePhase + 0.3) % (Math.PI * 2);
+      wavePhase = (wavePhase + 0.3) % (Math.PI / 1.5);
       
       rect.transition()
         .duration(duration)
