@@ -12,7 +12,7 @@ import * as d3 from 'd3';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'scintillate';
-  private resizeListener: any;
+  private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -58,8 +58,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      const color1 = this.colors[Math.floor(Math.random() * this.colors.length)];
-      const color2 = this.colors[Math.floor(Math.random() * this.colors.length)];
+      const color1 = this.getRandomColor();
+      const color2 = this.getRandomColor();
 
       gradient.append('stop')
         .attr('offset', '0%')
@@ -94,6 +94,10 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('height', height)
         .attr('fill', `url(#gradient${i + 3})`);
     }
+  }
+
+  private getRandomColor(): string {
+    return this.colors[Math.floor(Math.random() * this.colors.length)];
   }
 
   private onResize() {
