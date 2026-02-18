@@ -114,7 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('height', height)
       .attr('fill', 'url(#backgroundGradient)');
 
-    // Create 3 rectangles on the left side
+    // Create 3 rectangles on the left side (widest to narrowest)
     for (let i = 3; i >= 0; i--) {
       const rect = svg.append('rect')
         .attr('x',  0)
@@ -125,7 +125,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('fill', `url(#gradient${i})`)
         .attr('filter', 'url(#edgeBlur)');
       
-      // Animate the width to create vacillating effect
+      // Animate the width to create vacillating effect (skip i=0 which has no width)
       if (i > 0) {
         this.animateLeftRectangle(rect, i, rectWidth);
       }
@@ -133,7 +133,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Create 3 rectangles on the right side
     for (let i = 0; i < 3; i++) {
-      const xPosition = width - (3 - i) * rectWidth;
+      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
+      const multiplier = 3 - i;
+      const xPosition = width - multiplier * rectWidth;
       const rect = svg.append('rect')
         .attr('x', xPosition)
         .attr('y', 0)
@@ -144,7 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('filter', 'url(#edgeBlur)');
       
       // Animate the x position and width to create vacillating effect
-      this.animateRightRectangle(rect, width, (3 - i), rectWidth);
+      this.animateRightRectangle(rect, width, multiplier, rectWidth);
     }
   }
 
