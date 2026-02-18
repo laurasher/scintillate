@@ -68,7 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const bgGradient = defs.append('linearGradient')
       .attr('id', 'backgroundGradient')
       .attr('x1', '0%')
-      .attr('y1', '100%')
+      .attr('y1', '0%')
       .attr('x2', '100%')
       .attr('y2', '0%');
 
