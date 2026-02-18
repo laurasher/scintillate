@@ -20,4 +20,75 @@ body {
 #d3-container svg {
     display: block;
 }
+
+.controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.controls label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+}
+
+.controls input[type="range"] {
+    width: 200px;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #92B2BD, #63A8AF);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #63A8AF;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.controls input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #63A8AF;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.controls input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+.controls .speed-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #63A8AF;
+    min-width: 40px;
+    text-align: right;
+}
   

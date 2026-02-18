@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
+  animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -153,7 +154,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private animateLeftRectangle(rect: any, index: number, rectWidth: number) {
     const baseWidth = index * rectWidth;
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
-    const duration = 3000 + (index * 500); // Meditative speed, slightly different for each layer
+    const baseDuration = 1500 + (index * 250); // Faster base speed, slightly different for each layer
+    const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     const animate = () => {
       if (!this.animationActive) return;
@@ -175,7 +177,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private animateRightRectangle(rect: any, width: number, multiplier: number, rectWidth: number) {
     const baseX = width - multiplier * rectWidth;
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
-    const duration = 3000 + (multiplier * 500); // Meditative speed, slightly different for each layer
+    const baseDuration = 1500 + (multiplier * 250); // Faster base speed, slightly different for each layer
+    const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     const animate = () => {
       if (!this.animationActive) return;
@@ -201,6 +204,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private onResize() {
+    this.createVisualization();
+  }
+
+  onSpeedChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.animationSpeed = parseFloat(input.value);
+    // Recreate visualization with new speed
     this.createVisualization();
   }
 }
