@@ -349,12 +349,7 @@ export class AppComponent implements OnInit, OnDestroy {
     
     // Select third color from remaining colors (excluding both index1 and index2)
     // Create array of available indices excluding index1 and index2
-    const availableIndices = [];
-    for (let i = 0; i < this.colors.length; i++) {
-      if (i !== index1 && i !== index2) {
-        availableIndices.push(i);
-      }
-    }
+    const availableIndices = this.colors.map((_, i) => i).filter(i => i !== index1 && i !== index2);
     const index3 = availableIndices[Math.floor(Math.random() * availableIndices.length)];
     const color3 = this.colors[index3];
     
