@@ -97,6 +97,38 @@ describe('ChatComponent', () => {
     expect(systemMessages[2].text).toBe('Goodbye!');
   }));
 
+  it('should return fallback placeholder when dialogues are not loaded', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    httpMock.expectOne('assets/script.json');
+    // Dialogues not yet loaded
+    expect(fixture.componentInstance.suggestedResponse).toBe('Type a message…');
+  });
+
+  it('should return next dialogue as suggested response after script loads', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    // After init, dialogueIndex is 1, so next suggested response is dialogues[1]
+    expect(fixture.componentInstance.suggestedResponse).toBe('How can I help?');
+  });
+
+  it('should update suggested response after sending a message', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    fixture.componentInstance.userInput = 'Hello';
+    fixture.componentInstance.sendMessage();
+    tick(400);
+
+    // dialogueIndex is now 2, so next suggested response is dialogues[2]
+    expect(fixture.componentInstance.suggestedResponse).toBe('Goodbye!');
+  }));
+
   it('should show error message when script fails to load', () => {
     const fixture = TestBed.createComponent(ChatComponent);
     fixture.detectChanges();

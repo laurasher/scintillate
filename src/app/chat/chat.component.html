@@ -15,8 +15,8 @@
       class="chat-input"
       [(ngModel)]="userInput"
       (keydown)="onKeydown($event)"
-      placeholder="Type a message…"
-      rows="3"
+      [placeholder]="suggestedResponse"
+      rows="4"
       aria-label="Chat input"
     ></textarea>
     <div class="chat-btn-group">

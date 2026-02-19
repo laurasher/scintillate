@@ -90,6 +90,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.diveForPearlsEvent.emit();
   }
 
+  get suggestedResponse(): string {
+    return this.dialogues.length > 0
+      ? this.dialogues[this.dialogueIndex % this.dialogues.length]
+      : 'Type a message…';
+  }
+
   private addSystemMessage(text: string) {
     this.messages.push({ type: 'system', text });
     this.shouldScrollToBottom = true;
