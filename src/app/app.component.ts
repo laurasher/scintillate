@@ -162,7 +162,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Right edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 2 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 0.8 + wavePhase) * waveAmplitude;
       const x = width + wave;
       path += ` L ${x},${y}`;
     }
@@ -184,7 +184,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Left edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 2 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 0.8 + wavePhase) * waveAmplitude;
       const x = xPosition + wave;
       if (i === 0) {
         path += `M ${x},${y}`; // Start point
@@ -235,7 +235,7 @@ export class AppComponent implements OnInit, OnDestroy {
         })
         .on('end', () => {
           // Update phase to continue smoothly from where we ended (keep within reasonable range)
-          wavePhase = (startPhase + 1.0) % (Math.PI * 2);
+          wavePhase = (startPhase + 1.0) % (Math.PI * 0.8);
           animate();
         });
     };
@@ -278,7 +278,7 @@ export class AppComponent implements OnInit, OnDestroy {
         })
         .on('end', () => {
           // Update phase to continue smoothly from where we ended (keep within reasonable range)
-          wavePhase = (startPhase + 1.0) % (Math.PI * 2);
+          wavePhase = (startPhase + 1.0) % (Math.PI * 0.8);
           animate();
         });
     };
