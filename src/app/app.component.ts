@@ -20,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private centerRect: d3.Selection<SVGRectElement, unknown, HTMLElement, any> | null = null;
   private particleGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any> | null = null;
   private readonly D3_CONTAINER_SELECTOR = '#d3-container';
-  private readonly NUM_PARTICLES = 2000; // Number of dots to create the rectangle
+  private readonly NUM_PARTICLES = 2000; // Number of dots to create the rectangle (thousands for performance)
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -247,12 +247,13 @@ export class AppComponent implements OnInit, OnDestroy {
       .on('click', () => this.onCenterRectangleClick());
 
     // Generate particle data - random positions within the final rectangle
+    const maxDelay = 800;
     const particles: Array<{x: number, y: number, startX: number, delay: number}> = [];
     for (let i = 0; i < this.NUM_PARTICLES; i++) {
       const finalX = centerX + Math.random() * rectWidth;
       const finalY = centerY + Math.random() * rectHeight;
       const startX = Math.random() * centerX; // Start from left side
-      const delay = Math.random() * 800; // Stagger the start times
+      const delay = Math.random() * maxDelay; // Stagger the start times
       
       particles.push({
         x: finalX,
@@ -262,7 +263,10 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Create circles for each particle
+    // Create circles for each particle and track when all transitions complete
+    let completedCount = 0;
+    const transitionDuration = 1500;
+    
     this.particleGroup.selectAll('circle')
       .data(particles)
       .enter()
@@ -274,20 +278,14 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('opacity', 0)
       .transition()
       .delay(d => d.delay)
-      .duration(1500)
+      .duration(transitionDuration)
       .ease(d3.easeCubicOut)
       .attr('cx', d => d.x)
       .attr('opacity', 0.9)
-      .on('end', (event, d) => {
-        // Check if this is the last particle to finish
-        const allFinished = this.particleGroup?.selectAll('circle')
-          .filter(function() {
-            const circle = d3.select(this);
-            return parseFloat(circle.attr('opacity') as string) > 0.8;
-          })
-          .size() === particles.length;
-        
-        if (allFinished && this.rectangleState === 'emerging') {
+      .on('end', () => {
+        completedCount++;
+        // Check if all particles have finished
+        if (completedCount === particles.length && this.rectangleState === 'emerging') {
           this.rectangleState = 'centered';
         }
       });
@@ -305,12 +303,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const group = this.particleGroup;
+    const maxDelay = 500;
+    const transitionDuration = 1500;
 
     // Animate particles dissolving to the right side
     group.selectAll('circle')
       .transition()
-      .delay(() => Math.random() * 500) // Stagger the dissolution
-      .duration(1500)
+      .delay(() => Math.random() * maxDelay) // Stagger the dissolution
+      .duration(transitionDuration)
       .ease(d3.easeCubicIn)
       .attr('cx', width + 50) // Move beyond the right edge
       .attr('opacity', 0)
@@ -319,11 +319,11 @@ export class AppComponent implements OnInit, OnDestroy {
         d3.select(this).remove();
       });
 
-    // After all particles have started dissolving, clean up
+    // Wait for all particles to complete (maxDelay + transitionDuration + buffer)
     setTimeout(() => {
       group.remove();
       this.particleGroup = null;
       this.rectangleState = 'hidden';
-    }, 2000);
+    }, maxDelay + transitionDuration + 100);
   }
 }
