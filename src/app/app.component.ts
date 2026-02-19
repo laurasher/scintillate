@@ -19,6 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private colorCycleTimeouts: number[] = [];
   private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly DIVE_SPEED_MULTIPLIER = 2;
+  private svgRects: { rect: any; index: number; rectWidth: number; height: number }[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   controlsVisible = false;
   pearlPanelVisible = false;
@@ -168,6 +169,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('fill', 'url(#backgroundGradient)');
 
     // Create 3 rectangles on the left side (widest to narrowest)
+    this.svgRects = [];
     for (let i = 3; i >= 0; i--) {
       const rect = svg.append('path')
         .attr('opacity', 0.3)
@@ -180,6 +182,7 @@ export class AppComponent implements OnInit, OnDestroy {
       
       // Animate the width to create vacillating effect (skip i=0 which has no width)
       if (i > 0) {
+        this.svgRects.push({ rect, index: i, rectWidth, height });
         this.animateLeftRectangle(rect, i, rectWidth, height);
       }
     }
@@ -433,6 +436,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.createVisualization();
   }
 
+  /** Restart only the undulation path animations at the current animationSpeed,
+   *  without touching the gradient colour cycles. */
+  private restartRectAnimations() {
+    for (const { rect, index, rectWidth, height } of this.svgRects) {
+      rect.interrupt();
+      this.animateLeftRectangle(rect, index, rectWidth, height);
+    }
+  }
+
   toggleControls() {
     this.controlsVisible = !this.controlsVisible;
   }
@@ -441,14 +453,18 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
     const originalSpeed = this.animationSpeed;
     this.animationSpeed = originalSpeed * this.DIVE_SPEED_MULTIPLIER;
-    this.createVisualization();
+    this.restartRectAnimations();
 
     this.diveForPearlsTimeout = setTimeout(() => {
       this.diveForPearlsTimeout = null;
       this.animationSpeed = originalSpeed;
-      this.createVisualization();
+      this.restartRectAnimations();
       this.pearlPanelVisible = true;
     }, 5000);
+  }
+
+  tossBack() {
+    this.pearlPanelVisible = false;
   }
 
   onSpeedChange(event: Event) {
