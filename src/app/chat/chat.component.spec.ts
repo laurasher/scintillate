@@ -65,6 +65,24 @@ describe('ChatComponent', () => {
     expect(fixture.componentInstance.messages[2].text).toBe('How can I help?');
   }));
 
+  it('should send suggestedResponse as user message when userInput is empty', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    // userInput is empty – clicking Send should use the suggestedResponse
+    fixture.componentInstance.userInput = '';
+    fixture.componentInstance.sendMessage();
+
+    expect(fixture.componentInstance.messages[1].type).toBe('user');
+    expect(fixture.componentInstance.messages[1].text).toBe('How can I help?');
+    expect(fixture.componentInstance.userInput).toBe('');
+
+    tick(400);
+    expect(fixture.componentInstance.messages[2].type).toBe('system');
+  }));
+
   it('should not send empty message', () => {
     const fixture = TestBed.createComponent(ChatComponent);
     fixture.detectChanges();

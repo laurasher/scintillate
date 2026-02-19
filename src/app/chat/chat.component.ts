@@ -63,7 +63,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage() {
-    const text = this.userInput.trim();
+    const text = (this.userInput || this.suggestedResponse).trim();
     if (!text) return;
 
     this.messages.push({ type: 'user', text });
