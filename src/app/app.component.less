@@ -145,7 +145,7 @@ body {
     position: fixed;
     top: 3vh;
     left: -45%;
-    width: 38%;
+    width: 48%;
     height: 90vh;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
@@ -169,21 +169,105 @@ body {
 .pearl-panel__inner {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 24px;
-    text-align: center;
+    align-items: stretch;
+    gap: 12px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: calc(90vh - 40px);
 }
 
-.pearl-panel__icon {
-    font-size: 64px;
+.pearl-panel__clams {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.pearl-panel__text {
-    font-size: 16px;
-    font-style: italic;
+.clam {
+    background: rgba(188, 178, 176, 0.18);
+    border: 1.5px solid rgba(99, 168, 175, 0.3);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.clam__header {
+    font-size: 13px;
+    font-weight: 700;
     color: #63A8AF;
-    margin: 0;
+    margin-bottom: 4px;
+    letter-spacing: 0.03em;
+}
+
+.pearl {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(99, 168, 175, 0.2);
+    border-radius: 7px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pearl__metrics {
+    display: flex;
+    gap: 10px;
+}
+
+.pearl__metric {
+    font-size: 12px;
+    font-weight: 600;
+    color: #92B2BD;
+    background: rgba(99, 168, 175, 0.1);
+    border-radius: 4px;
+    padding: 2px 7px;
+}
+
+.pearl__text-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.pearl__checkbox {
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: #63A8AF;
+    cursor: pointer;
+}
+
+.pearl__text {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.pearl-panel__gather-btn {
+    padding: 10px 22px;
+    background: #63A8AF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+
+    &:hover {
+        background: #4e8f96;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
 }
 
 .pearl-panel__toss-btn {
