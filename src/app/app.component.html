@@ -1,14 +1,19 @@
 <div id="d3-container"></div>
-<div class="controls">
-  <label for="speed-slider">Animation Speed</label>
-  <input 
-    type="range" 
-    id="speed-slider"
-    min="0.5" 
-    max="3" 
-    step="0.1" 
-    [value]="animationSpeed"
-    (input)="onSpeedChange($event)"
-  />
-  <span class="speed-value">{{(animationSpeed || 1).toFixed(1)}}x</span>
+<div class="controls-wrapper">
+  <div class="controls" [class.controls-hidden]="!controlsVisible">
+    <label for="speed-slider">Animation Speed</label>
+    <input 
+      type="range" 
+      id="speed-slider"
+      min="0.5" 
+      max="3" 
+      step="0.1" 
+      [value]="animationSpeed"
+      (input)="onSpeedChange($event)"
+    />
+    <span class="speed-value">{{(animationSpeed || 1).toFixed(1)}}x</span>
+  </div>
+  <button class="toggle-btn" (click)="toggleControls()" [attr.aria-expanded]="controlsVisible" aria-label="Toggle animation controls">
+    <span class="toggle-arrow" [class.arrow-up]="controlsVisible">&#8964;</span>
+  </button>
 </div>
