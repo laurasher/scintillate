@@ -18,7 +18,9 @@ export class AppComponent implements OnInit, OnDestroy {
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   rectangleState: 'hidden' | 'emerging' | 'centered' | 'dissolving' = 'hidden';
   private centerRect: d3.Selection<SVGRectElement, unknown, HTMLElement, any> | null = null;
+  private particleGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any> | null = null;
   private readonly D3_CONTAINER_SELECTOR = '#d3-container';
+  private readonly NUM_PARTICLES = 2000; // Number of dots to create the rectangle
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -238,30 +240,56 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const svg = d3.select(`${this.D3_CONTAINER_SELECTOR} svg`);
 
-    // Create the white rectangle with rounded corners
-    this.centerRect = svg.append('rect')
-      .attr('class', 'center-rectangle')
-      .attr('x', 0)
-      .attr('y', centerY)
-      .attr('width', 0)
-      .attr('rx', 20)
-      .attr('ry', 20)
-      .attr('height', rectHeight)
-      .attr('fill', 'white')
-      .attr('opacity', 0)
+    // Create a group to hold all particles
+    this.particleGroup = svg.append('g')
+      .attr('class', 'particle-group')
       .style('cursor', 'pointer')
       .on('click', () => this.onCenterRectangleClick());
 
-    // Animate emergence from left side to center
-    this.centerRect
+    // Generate particle data - random positions within the final rectangle
+    const particles: Array<{x: number, y: number, startX: number, delay: number}> = [];
+    for (let i = 0; i < this.NUM_PARTICLES; i++) {
+      const finalX = centerX + Math.random() * rectWidth;
+      const finalY = centerY + Math.random() * rectHeight;
+      const startX = Math.random() * centerX; // Start from left side
+      const delay = Math.random() * 800; // Stagger the start times
+      
+      particles.push({
+        x: finalX,
+        y: finalY,
+        startX: startX,
+        delay: delay
+      });
+    }
+
+    // Create circles for each particle
+    this.particleGroup.selectAll('circle')
+      .data(particles)
+      .enter()
+      .append('circle')
+      .attr('cx', d => d.startX)
+      .attr('cy', d => d.y)
+      .attr('r', 1.5) // Small dot size
+      .attr('fill', 'white')
+      .attr('opacity', 0)
       .transition()
+      .delay(d => d.delay)
       .duration(1500)
       .ease(d3.easeCubicOut)
-      .attr('x', centerX)
-      .attr('width', rectWidth)
+      .attr('cx', d => d.x)
       .attr('opacity', 0.9)
-      .on('end', () => {
-        this.rectangleState = 'centered';
+      .on('end', (event, d) => {
+        // Check if this is the last particle to finish
+        const allFinished = this.particleGroup?.selectAll('circle')
+          .filter(function() {
+            const circle = d3.select(this);
+            return parseFloat(circle.attr('opacity') as string) > 0.8;
+          })
+          .size() === particles.length;
+        
+        if (allFinished && this.rectangleState === 'emerging') {
+          this.rectangleState = 'centered';
+        }
       });
   }
 
@@ -273,23 +301,29 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private dissolveRectangle() {
-    if (!this.centerRect) return;
+    if (!this.particleGroup) return;
 
     const width = window.innerWidth;
-    const rect = this.centerRect;
+    const group = this.particleGroup;
 
-    // Animate dissolution to right side
-    rect
+    // Animate particles dissolving to the right side
+    group.selectAll('circle')
       .transition()
+      .delay(() => Math.random() * 500) // Stagger the dissolution
       .duration(1500)
       .ease(d3.easeCubicIn)
-      .attr('x', width)
-      .attr('width', 0)
+      .attr('cx', width + 50) // Move beyond the right edge
       .attr('opacity', 0)
-      .on('end', () => {
-        rect.remove();
-        this.centerRect = null;
-        this.rectangleState = 'hidden';
+      .on('end', function() {
+        // Remove particle after animation
+        d3.select(this).remove();
       });
+
+    // After all particles have started dissolving, clean up
+    setTimeout(() => {
+      group.remove();
+      this.particleGroup = null;
+      this.rectangleState = 'hidden';
+    }, 2000);
   }
 }
