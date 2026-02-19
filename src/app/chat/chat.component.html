@@ -1,0 +1,26 @@
+<div class="chat-container">
+  <div class="chat-messages" #messagesContainer>
+    <div
+      *ngFor="let message of messages"
+      class="chat-bubble"
+      [class.chat-bubble--user]="message.type === 'user'"
+      [class.chat-bubble--system]="message.type === 'system'"
+    >
+      <span class="chat-bubble__label">{{ message.type === 'user' ? 'You' : 'System' }}</span>
+      <p class="chat-bubble__text">{{ message.text }}</p>
+    </div>
+  </div>
+  <div class="chat-input-row">
+    <textarea
+      class="chat-input"
+      [(ngModel)]="userInput"
+      (keydown)="onKeydown($event)"
+      placeholder="Type a message…"
+      rows="2"
+      aria-label="Chat input"
+    ></textarea>
+    <button class="chat-send-btn" (click)="sendMessage()" aria-label="Send message">
+      Send
+    </button>
+  </div>
+</div>
