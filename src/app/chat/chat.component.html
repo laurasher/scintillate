@@ -16,11 +16,16 @@
       [(ngModel)]="userInput"
       (keydown)="onKeydown($event)"
       placeholder="Type a message…"
-      rows="2"
+      rows="3"
       aria-label="Chat input"
     ></textarea>
-    <button class="chat-send-btn" (click)="sendMessage()" aria-label="Send message">
-      Send
-    </button>
+    <div class="chat-btn-group">
+      <button class="chat-dive-btn" (click)="diveForPearls()" aria-label="Dive for pearls">
+        Dive for pearls
+      </button>
+      <button class="chat-send-btn" (click)="sendMessage()" aria-label="Send message">
+        Send
+      </button>
+    </div>
   </div>
 </div>

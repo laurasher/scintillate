@@ -17,8 +17,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
+  private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
+  private readonly DIVE_SPEED_MULTIPLIER = 2;
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   controlsVisible = false;
+  pearlPanelVisible = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -37,6 +40,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // Clear any pending color cycle timeouts
     this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
     this.colorCycleTimeouts = [];
+
+    // Clear pending dive-for-pearls timeout
+    if (this.diveForPearlsTimeout !== null) {
+      clearTimeout(this.diveForPearlsTimeout);
+      this.diveForPearlsTimeout = null;
+    }
     
     // Cancel any active D3 transitions
     if (isPlatformBrowser(this.platformId)) {
@@ -426,6 +435,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleControls() {
     this.controlsVisible = !this.controlsVisible;
+  }
+
+  onDiveForPearls() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const originalSpeed = this.animationSpeed;
+    this.animationSpeed = originalSpeed * this.DIVE_SPEED_MULTIPLIER;
+    this.createVisualization();
+
+    this.diveForPearlsTimeout = setTimeout(() => {
+      this.diveForPearlsTimeout = null;
+      this.animationSpeed = originalSpeed;
+      this.createVisualization();
+      this.pearlPanelVisible = true;
+    }, 5000);
   }
 
   onSpeedChange(event: Event) {

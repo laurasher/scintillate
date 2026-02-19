@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, PLATFORM_ID, Inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   private dialogueIndex = 0;
   private shouldScrollToBottom = false;
 
+  @Output() diveForPearlsEvent = new EventEmitter<void>();
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLElement>;
 
   constructor(
@@ -83,6 +84,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       event.preventDefault();
       this.sendMessage();
     }
+  }
+
+  diveForPearls() {
+    this.diveForPearlsEvent.emit();
   }
 
   private addSystemMessage(text: string) {
