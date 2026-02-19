@@ -162,8 +162,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // Create the gliding rectangle (narrow with rounded edges) in the middle of the stack
     // This positions it between the left and right rectangles for a depth effect
     // Initially positioned hidden on the far left
-    const glidingWidth = rectWidth * 0.15; // 15% of base rectWidth (narrow)
-    const glidingHeight = height * 0.5; // 50% of screen height
+    const glidingWidth = rectWidth*1.5; // 15% of base rectWidth (narrow)
+    const glidingHeight = rectWidth * 0.5; // 50% of screen height
     const yPosition = (height - glidingHeight) / 2; // Center vertically
     
     this.glidingRect = svg.append('rect')
@@ -171,9 +171,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('y', yPosition)
       .attr('width', glidingWidth)
       .attr('height', glidingHeight)
-      .attr('rx', 20) // Rounded corners
-      .attr('ry', 20) // Rounded corners
-      .attr('fill', '#63A8AF')
+      .attr('rx', 4) // Rounded corners
+      .attr('ry', 4) // Rounded corners
+      .attr('fill', 'white')
       .attr('opacity', 0.7)
       .style('pointer-events', 'none'); // Don't interfere with click detection
     
