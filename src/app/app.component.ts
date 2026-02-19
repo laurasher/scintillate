@@ -203,7 +203,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Right edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.2 + wavePhase) * waveAmplitude;
       const x = width + wave;
       path += ` L ${x},${y}`;
     }
@@ -225,7 +225,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Left edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.2 + wavePhase) * waveAmplitude;
       const x = xPosition + wave;
       if (i === 0) {
         path += `M ${x},${y}`; // Start point
