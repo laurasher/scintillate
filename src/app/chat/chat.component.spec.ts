@@ -189,4 +189,26 @@ describe('ChatComponent', () => {
     const userMessages = fixture.componentInstance.messages.filter(m => m.type === 'user');
     expect(userMessages.length).toBe(0);
   });
+
+  it('setInput should replace userInput with the provided text', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    fixture.componentInstance.userInput = 'old text';
+    fixture.componentInstance.setInput('new gathered text');
+    expect(fixture.componentInstance.userInput).toBe('new gathered text');
+  });
+
+  it('setInput should overwrite existing userInput', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    fixture.componentInstance.setInput('first');
+    fixture.componentInstance.setInput('second');
+    expect(fixture.componentInstance.userInput).toBe('second');
+  });
 });

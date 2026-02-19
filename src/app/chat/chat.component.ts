@@ -94,6 +94,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.diveForPearlsEvent.emit();
   }
 
+  setInput(text: string) {
+    this.userInput = text;
+  }
+
   get suggestedResponse(): string {
     return this.dialogues.length > 0
       ? this.dialogues[this.dialogueIndex % this.dialogues.length]
