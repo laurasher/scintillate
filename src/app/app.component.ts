@@ -159,25 +159,8 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Create 3 rectangles on the right side
-    for (let i = 0; i < 3; i++) {
-      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
-      const multiplier = 3 - i;
-      const xPosition = width - multiplier * rectWidth;
-      const rect = svg.append('rect')
-        .attr('x', xPosition)
-        .attr('y', 0)
-        .attr('opacity', 0.3)
-        .attr('width', width - xPosition)
-        .attr('height', height)
-        .attr('fill', `url(#gradient${i + 3})`)
-        .attr('filter', 'url(#edgeBlur)');
-      
-      // Animate the x position and width to create vacillating effect
-      this.animateRightRectangle(rect, width, multiplier, rectWidth);
-    }
-
-    // Create the gliding rectangle (narrow with rounded edges)
+    // Create the gliding rectangle (narrow with rounded edges) in the middle of the stack
+    // This positions it between the left and right rectangles for a depth effect
     // Initially positioned hidden on the far left
     const glidingWidth = rectWidth * 0.15; // 15% of base rectWidth (narrow)
     const glidingHeight = height * 0.5; // 50% of screen height
@@ -195,6 +178,24 @@ export class AppComponent implements OnInit, OnDestroy {
       .style('pointer-events', 'none'); // Don't interfere with click detection
     
     this.glidingRectVisible = false;
+
+    // Create 3 rectangles on the right side (after gliding rect for layering)
+    for (let i = 0; i < 3; i++) {
+      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
+      const multiplier = 3 - i;
+      const xPosition = width - multiplier * rectWidth;
+      const rect = svg.append('rect')
+        .attr('x', xPosition)
+        .attr('y', 0)
+        .attr('opacity', 0.3)
+        .attr('width', width - xPosition)
+        .attr('height', height)
+        .attr('fill', `url(#gradient${i + 3})`)
+        .attr('filter', 'url(#edgeBlur)');
+      
+      // Animate the x position and width to create vacillating effect
+      this.animateRightRectangle(rect, width, multiplier, rectWidth);
+    }
   }
 
   private animateLeftRectangle(rect: any, index: number, rectWidth: number) {
