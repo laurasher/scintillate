@@ -221,7 +221,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private cycleGradientColors(gradientIndex: number) {
     // Stagger the start time for each gradient for visual variety
     const delay = gradientIndex * 1000; // 1 second stagger between gradients
-    const cycleDuration = 3000; // 8 seconds for smooth color transition
+    const cycleDuration = 3000; // 3 seconds for smooth color transition
     
     const timeoutId = setTimeout(() => {
       const animateColors = () => {
@@ -259,13 +259,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private getTwoDifferentColors(): [string, string] {
-    const color1 = this.getRandomColor();
-    let color2 = this.getRandomColor();
+    // Select first color
+    const index1 = Math.floor(Math.random() * this.colors.length);
+    const color1 = this.colors[index1];
     
-    // Keep selecting until we get a different color
-    while (color2 === color1) {
-      color2 = this.getRandomColor();
+    // Select second color from remaining colors
+    // Generate index from 0 to colors.length-2, then adjust if >= index1
+    let index2 = Math.floor(Math.random() * (this.colors.length - 1));
+    if (index2 >= index1) {
+      index2++; // Skip the first color's index
     }
+    const color2 = this.colors[index2];
     
     return [color1, color2];
   }
