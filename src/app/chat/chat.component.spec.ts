@@ -81,6 +81,7 @@ describe('ChatComponent', () => {
 
     tick(400);
     expect(fixture.componentInstance.messages[2].type).toBe('system');
+    expect(fixture.componentInstance.messages[2].text).toBe('Goodbye!');
   }));
 
   it('should not send empty message', () => {

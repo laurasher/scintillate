@@ -63,6 +63,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage() {
+    const usingSuggestion = !this.userInput.trim();
     const text = (this.userInput || this.suggestedResponse).trim();
     if (!text) return;
 
@@ -71,6 +72,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.shouldScrollToBottom = true;
 
     if (this.dialogues.length > 0) {
+      if (usingSuggestion) {
+        this.dialogueIndex++; // skip past the suggested dialogue
+      }
       const response = this.dialogues[this.dialogueIndex % this.dialogues.length];
       this.dialogueIndex++;
       setTimeout(() => {
