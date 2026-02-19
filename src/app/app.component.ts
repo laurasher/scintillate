@@ -498,7 +498,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.restartRectAnimations();
       this.clams = this.generateClams();
       this.pearlPanelVisible = true;
-    }, 3000);
+    }, 2000);
   }
 
   private generateClams(): Clam[] {
