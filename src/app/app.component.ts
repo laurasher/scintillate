@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private resizeListener: (() => void) | null = null;
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
+  private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -30,6 +31,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.animationActive = false;
+    
+    // Clear any pending color cycle timeouts
+    this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    this.colorCycleTimeouts = [];
+    
+    // Cancel any active D3 transitions
+    if (isPlatformBrowser(this.platformId)) {
+      d3.selectAll('stop').interrupt();
+    }
+    
     if (isPlatformBrowser(this.platformId) && this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
     }
@@ -38,6 +49,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private createVisualization() {
     // Remove any existing SVG
     d3.select('#d3-container').selectAll('svg').remove();
+    
+    // Clear existing timeouts and reset array
+    this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    this.colorCycleTimeouts = [];
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -81,7 +96,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('stop-color', '#B7C5E8');
 
     // Function to create a gradient with random colors
-    const createGradient = (id: string) => {
+    const createGradient = (id: string, index: number) => {
       const gradient = defs.append('linearGradient')
         .attr('id', id)
         .attr('x1', '0%')
@@ -89,21 +104,25 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      const color1 = this.getRandomColor();
-      const color2 = this.getRandomColor();
+      const [color1, color2] = this.getTwoDifferentColors();
 
       gradient.append('stop')
+        .attr('class', `stop-0-${index}`)
         .attr('offset', '0%')
         .attr('stop-color', color1);
 
       gradient.append('stop')
+        .attr('class', `stop-1-${index}`)
         .attr('offset', '100%')
         .attr('stop-color', color2);
+      
+      // Start color cycling animation for this gradient
+      this.cycleGradientColors(index);
     };
 
     // Create gradients for all rectangles
     for (let i = 0; i < 6; i++) {
-      createGradient(`gradient${i}`);
+      createGradient(`gradient${i}`, i);
     }
 
     // Add background rectangle first (so it's behind everything else)
@@ -286,8 +305,69 @@ export class AppComponent implements OnInit, OnDestroy {
     animate();
   }
 
+  private cycleGradientColors(gradientIndex: number) {
+    // Stagger the start time for each gradient for visual variety
+    const delay = gradientIndex * 1000; // 1 second stagger between gradients
+    const cycleDuration = 3000; // 3 seconds for smooth color transition
+    
+    const timeoutId = setTimeout(() => {
+      const animateColors = () => {
+        if (!this.animationActive) return;
+        
+        // Select gradient stops
+        const stop0 = d3.select(`.stop-0-${gradientIndex}`);
+        const stop1 = d3.select(`.stop-1-${gradientIndex}`);
+        
+        // Get new colors to transition to (ensure they're different)
+        const [newColor1, newColor2] = this.getTwoDifferentColors();
+        
+        // Smoothly transition both gradient stops to new colors
+        stop0.transition()
+          .duration(cycleDuration)
+          .ease(d3.easeLinear)
+          .attr('stop-color', newColor1);
+        
+        stop1.transition()
+          .duration(cycleDuration)
+          .ease(d3.easeLinear)
+          .attr('stop-color', newColor2)
+          .on('end', animateColors); // Continue cycling after transition completes
+      };
+      
+      animateColors();
+    }, delay) as unknown as number;
+    
+    // Track timeout for cleanup
+    this.colorCycleTimeouts.push(timeoutId);
+  }
+
   private getRandomColor(): string {
     return this.colors[Math.floor(Math.random() * this.colors.length)];
+  }
+
+  private getTwoDifferentColors(): [string, string] {
+    // Guard: handle edge case with fewer than 2 colors
+    // Note: In this application, we always have 6 colors, so this guard 
+    // is purely defensive. If it ever triggers, we return the same color
+    // twice, which creates a solid gradient (not ideal but safe).
+    if (this.colors.length < 2) {
+      const color = this.colors[0] || '#000000';
+      return [color, color];
+    }
+    
+    // Select first color
+    const index1 = Math.floor(Math.random() * this.colors.length);
+    const color1 = this.colors[index1];
+    
+    // Select second color from remaining colors
+    // Generate index from 0 to colors.length-2, then adjust if >= index1
+    let index2 = Math.floor(Math.random() * (this.colors.length - 1));
+    if (index2 >= index1) {
+      index2++; // Skip the first color's index
+    }
+    const color2 = this.colors[index2];
+    
+    return [color1, color2];
   }
 
   private onResize() {
