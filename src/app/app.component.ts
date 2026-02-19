@@ -196,7 +196,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('rx', 4) // Rounded corners
       .attr('ry', 4) // Rounded corners
       .attr('fill', 'white')
-      .attr('opacity', 0.7)
+      .attr('opacity', 1)
       .style('pointer-events', 'none'); // Don't interfere with click detection
     
     this.glidingRectVisible = false;
@@ -483,11 +483,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const rectWidth = width * 0.1;
-    const glidingWidth = rectWidth * 0.15;
+    // const glidingWidth = rectWidth * 0.15;
 
     if (!this.glidingRectVisible) {
       // Glide from left to the center of the screen
-      const targetX = (width / 2) - (glidingWidth / 2); // Center the rectangle horizontally
+      const targetX = (width / 2) - (rectWidth); // Center the rectangle horizontally
       
       this.glidingRect
         .transition()
