@@ -1,8 +1,21 @@
 <div id="d3-container"></div>
 <div class="pearl-panel" [class.pearl-panel--visible]="pearlPanelVisible">
   <div class="pearl-panel__inner">
-    <span class="pearl-panel__icon">🦪</span>
-    <p class="pearl-panel__text">A pearl rises from the deep…</p>
+    <div class="pearl-panel__clams">
+      <div class="clam" *ngFor="let clam of clams; let i = index">
+        <div class="clam__header">🦪 Clam {{i + 1}}</div>
+        <div class="pearl" *ngFor="let pearl of clam.pearls">
+          <div class="pearl__metrics">
+            <span class="pearl__metric">{{pearl.metric1}}</span>
+            <span class="pearl__metric">{{pearl.metric2}}</span>
+          </div>
+          <div class="pearl__text-row">
+            <input type="checkbox" class="pearl__checkbox" [(ngModel)]="pearl.checked" aria-label="Select pearl" />
+            <span class="pearl__text">{{pearl.text}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
       Toss the rest back into the sea
     </button>

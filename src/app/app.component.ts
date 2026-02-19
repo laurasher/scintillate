@@ -1,13 +1,36 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import * as d3 from 'd3';
 import { ChatComponent } from './chat/chat.component';
+
+interface Pearl {
+  metric1: number;
+  metric2: number;
+  text: string;
+  checked: boolean;
+}
+
+interface Clam {
+  pearls: Pearl[];
+}
+
+interface ScriptLine {
+  actor: string;
+  dialogue: string;
+}
+
+interface Script {
+  title: string;
+  lines: ScriptLine[];
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ChatComponent],
+  imports: [RouterOutlet, CommonModule, FormsModule, ChatComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.less'
 })
@@ -20,11 +43,16 @@ export class AppComponent implements OnInit, OnDestroy {
   private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly DIVE_SPEED_MULTIPLIER = 2;
   private svgRects: { rect: any; index: number; rectWidth: number; height: number }[] = [];
+  private dialogues: string[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   controlsVisible = false;
   pearlPanelVisible = false;
+  clams: Clam[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     // Only run d3 visualization in the browser
@@ -32,6 +60,14 @@ export class AppComponent implements OnInit, OnDestroy {
       this.createVisualization();
       this.resizeListener = () => this.onResize();
       window.addEventListener('resize', this.resizeListener);
+      this.http.get<Script>('assets/script.json').subscribe({
+        next: script => {
+          this.dialogues = script.lines.map(line => line.dialogue);
+        },
+        error: () => {
+          // Pearls will use empty text if script fails to load
+        }
+      });
     }
   }
 
@@ -459,8 +495,29 @@ export class AppComponent implements OnInit, OnDestroy {
       this.diveForPearlsTimeout = null;
       this.animationSpeed = originalSpeed;
       this.restartRectAnimations();
+      this.clams = this.generateClams();
       this.pearlPanelVisible = true;
     }, 5000);
+  }
+
+  private generateClams(): Clam[] {
+    const clams: Clam[] = [];
+    for (let i = 0; i < 3; i++) {
+      const pearls: Pearl[] = [];
+      for (let j = 0; j < 3; j++) {
+        const randomDialogue = this.dialogues.length > 0
+          ? this.dialogues[Math.floor(Math.random() * this.dialogues.length)]
+          : '';
+        pearls.push({
+          metric1: Math.floor(Math.random() * 100) + 1,
+          metric2: Math.floor(Math.random() * 100) + 1,
+          text: randomDialogue,
+          checked: false
+        });
+      }
+      clams.push({ pearls });
+    }
+    return clams;
   }
 
   tossBack() {

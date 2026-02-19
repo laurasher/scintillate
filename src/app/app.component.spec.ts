@@ -126,4 +126,59 @@ describe('AppComponent', () => {
     expect(threeStopPercentage).toBeGreaterThan(28);
     expect(threeStopPercentage).toBeLessThan(38);
   });
+
+  it('should have clams as an empty array by default', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.clams).toEqual([]);
+  });
+
+  it('generateClams should return 3 clams each with 3 pearls', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const clams = (app as any).generateClams();
+    expect(clams.length).toBe(3);
+    clams.forEach((clam: any) => {
+      expect(clam.pearls.length).toBe(3);
+    });
+  });
+
+  it('generateClams pearls should have numeric metric1 and metric2 between 1 and 100', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const clams = (app as any).generateClams();
+    clams.forEach((clam: any) => {
+      clam.pearls.forEach((pearl: any) => {
+        expect(pearl.metric1).toBeGreaterThanOrEqual(1);
+        expect(pearl.metric1).toBeLessThanOrEqual(100);
+        expect(pearl.metric2).toBeGreaterThanOrEqual(1);
+        expect(pearl.metric2).toBeLessThanOrEqual(100);
+      });
+    });
+  });
+
+  it('generateClams pearls should have a text field and checked boolean', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const clams = (app as any).generateClams();
+    clams.forEach((clam: any) => {
+      clam.pearls.forEach((pearl: any) => {
+        expect(typeof pearl.text).toBe('string');
+        expect(pearl.checked).toBe(false);
+      });
+    });
+  });
+
+  it('generateClams pearl text should come from loaded dialogues when available', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const testDialogues = ['Hello world', 'Goodbye world', 'Another line'];
+    (app as any).dialogues = testDialogues;
+    const clams = (app as any).generateClams();
+    clams.forEach((clam: any) => {
+      clam.pearls.forEach((pearl: any) => {
+        expect(testDialogues).toContain(pearl.text);
+      });
+    });
+  });
 });
