@@ -240,7 +240,7 @@ export class AppComponent implements OnInit, OnDestroy {
     animate();
   }
 
-  private cycleGradientColors(gradientIndex: number, has3Stops: boolean = false) {
+  private cycleGradientColors(gradientIndex: number, has3Stops: boolean) {
     // Stagger the start time for each gradient for visual variety
     const delay = gradientIndex * 1000; // 1 second stagger between gradients
     const cycleDuration = 3000; // 3 seconds for smooth color transition
@@ -348,14 +348,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const color2 = this.colors[index2];
     
     // Select third color from remaining colors (excluding both index1 and index2)
-    let index3 = Math.floor(Math.random() * (this.colors.length - 2));
-    // Adjust index3 to skip both already selected indices
-    if (index3 >= Math.min(index1, index2)) {
-      index3++;
+    // Create array of available indices excluding index1 and index2
+    const availableIndices = [];
+    for (let i = 0; i < this.colors.length; i++) {
+      if (i !== index1 && i !== index2) {
+        availableIndices.push(i);
+      }
     }
-    if (index3 >= Math.max(index1, index2)) {
-      index3++;
-    }
+    const index3 = availableIndices[Math.floor(Math.random() * availableIndices.length)];
     const color3 = this.colors[index3];
     
     return [color1, color2, color3];
