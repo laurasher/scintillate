@@ -33,6 +33,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   private shouldScrollToBottom = false;
 
   @Output() diveForPearlsEvent = new EventEmitter<void>();
+  @Output() messageSentEvent = new EventEmitter<void>();
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLElement>;
 
   constructor(
@@ -70,6 +71,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.messages.push({ type: 'user', text });
     this.userInput = '';
     this.shouldScrollToBottom = true;
+    this.messageSentEvent.emit();
 
     if (this.dialogues.length > 0) {
       if (usingSuggestion) {

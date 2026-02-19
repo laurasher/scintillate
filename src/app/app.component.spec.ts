@@ -214,4 +214,47 @@ describe('AppComponent', () => {
     app.gatherPearls();
     expect(chatComp.userInput).toBe('');
   });
+
+  it('togglePearl should toggle the checked property of a pearl', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const pearl = { metric1: 1, metric2: 2, text: 'Test', checked: false };
+    app.togglePearl(pearl);
+    expect(pearl.checked).toBeTrue();
+    app.togglePearl(pearl);
+    expect(pearl.checked).toBeFalse();
+  });
+
+  it('gatherPearls should set pearlsGathered flag so onMessageSent closes the panel', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    app.clams = [{ pearls: [{ metric1: 1, metric2: 2, text: 'A', checked: true }] }];
+    app.pearlPanelVisible = true;
+    app.gatherPearls();
+    app.onMessageSent();
+    expect(app.pearlPanelVisible).toBeFalse();
+  });
+
+  it('onMessageSent should not close panel when gatherPearls was not called', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    app.pearlPanelVisible = true;
+    app.onMessageSent();
+    expect(app.pearlPanelVisible).toBeTrue();
+  });
+
+  it('onMessageSent should only close panel once after gatherPearls', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    app.clams = [{ pearls: [{ metric1: 1, metric2: 2, text: 'A', checked: true }] }];
+    app.pearlPanelVisible = true;
+    app.gatherPearls();
+    app.onMessageSent(); // first send after gather: closes panel
+    app.pearlPanelVisible = true; // reopen manually
+    app.onMessageSent(); // second send without gather: should NOT close
+    expect(app.pearlPanelVisible).toBeTrue();
+  });
 });

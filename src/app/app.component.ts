@@ -47,6 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
   controlsVisible = false;
   pearlPanelVisible = false;
   clams: Clam[] = [];
+  private pearlsGathered = false;
 
   @ViewChild(ChatComponent) chatComponent!: ChatComponent;
 
@@ -531,6 +532,14 @@ export class AppComponent implements OnInit, OnDestroy {
       .filter(pearl => pearl.checked)
       .map(pearl => pearl.text);
     this.chatComponent.setInput(texts.join('\n\n'));
+    this.pearlsGathered = true;
+  }
+
+  onMessageSent() {
+    if (this.pearlsGathered) {
+      this.tossBack();
+      this.pearlsGathered = false;
+    }
   }
 
   togglePearl(pearl: { checked: boolean }) {

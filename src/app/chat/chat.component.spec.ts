@@ -211,4 +211,32 @@ describe('ChatComponent', () => {
     fixture.componentInstance.setInput('second');
     expect(fixture.componentInstance.userInput).toBe('second');
   });
+
+  it('should emit messageSentEvent when sendMessage is called with input', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    let emitted = false;
+    fixture.componentInstance.messageSentEvent.subscribe(() => { emitted = true; });
+    fixture.componentInstance.userInput = 'Hello';
+    fixture.componentInstance.sendMessage();
+    tick(400);
+    expect(emitted).toBeTrue();
+  }));
+
+  it('should not emit messageSentEvent when sendMessage is called with only whitespace and no suggestion loaded', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    let emitted = false;
+    fixture.componentInstance.messageSentEvent.subscribe(() => { emitted = true; });
+    fixture.componentInstance.userInput = '   ';
+    fixture.componentInstance.sendMessage();
+    tick(400);
+    expect(emitted).toBeFalse();
+  }));
 });
