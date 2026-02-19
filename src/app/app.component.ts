@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
   private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
-  private readonly DIVE_SPEED_MULTIPLIER = 2;
+  private readonly DIVE_SPEED_MULTIPLIER = 2.6;
   private svgRects: { rect: any; index: number; rectWidth: number; height: number }[] = [];
   private dialogues: string[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
@@ -496,7 +496,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.restartRectAnimations();
       this.clams = this.generateClams();
       this.pearlPanelVisible = true;
-    }, 5000);
+    }, 3000);
   }
 
   private generateClams(): Clam[] {
