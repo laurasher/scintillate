@@ -28,6 +28,7 @@ interface Script {
 export class ChatComponent implements OnInit, AfterViewChecked {
   messages: ChatMessage[] = [];
   userInput = '';
+  suggestedInput = '';
   private dialogues: string[] = [];
   private dialogueIndex = 0;
   private shouldScrollToBottom = false;
@@ -47,6 +48,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
           this.dialogues = script.lines.map(line => line.dialogue);
           this.addSystemMessage(this.dialogues[this.dialogueIndex % this.dialogues.length]);
           this.dialogueIndex++;
+          this.suggestedInput = this.dialogues[this.dialogueIndex % this.dialogues.length];
         },
         error: () => {
           this.addSystemMessage('Failed to load script. Please refresh the page.');
@@ -75,6 +77,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       this.dialogueIndex++;
       setTimeout(() => {
         this.addSystemMessage(response);
+        this.suggestedInput = this.dialogues[this.dialogueIndex % this.dialogues.length];
       }, 400);
     }
   }
