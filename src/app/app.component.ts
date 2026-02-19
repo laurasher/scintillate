@@ -226,22 +226,24 @@ export class AppComponent implements OnInit, OnDestroy {
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     // For seamless undulation, track elapsed time instead of discrete phase
-    let startTime = Date.now();
+    const startTime = Date.now();
     // Wave speed: determines how fast the wave pattern flows (radians per millisecond)
     const waveSpeed = 0.001; // Adjust this to control wave flow speed
     
     const animate = () => {
       if (!this.animationActive) return;
       
+      // Calculate phase once per animation cycle for efficiency
+      const cycleStartTime = Date.now();
+      
       rect.transition()
         .duration(duration)
         .ease(d3.easeSinInOut)
         .attrTween('d', () => {
-          const transitionStartTime = Date.now();
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount * d3.easeSinInOut(t);
-            // Calculate phase based on total elapsed time for continuous flow
-            const elapsedTime = Date.now() - startTime;
+            // Calculate phase based on total elapsed time and current position in transition
+            const elapsedTime = (cycleStartTime - startTime) + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
@@ -252,8 +254,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount - (2 * oscillationAmount * d3.easeSinInOut(t));
-            // Calculate phase based on total elapsed time for continuous flow
-            const elapsedTime = Date.now() - startTime;
+            // Calculate phase based on total elapsed time and current position in transition
+            const elapsedTime = (cycleStartTime - startTime) + duration + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
@@ -271,12 +273,15 @@ export class AppComponent implements OnInit, OnDestroy {
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     // For seamless undulation, track elapsed time instead of discrete phase
-    let startTime = Date.now();
+    const startTime = Date.now();
     // Wave speed: determines how fast the wave pattern flows (radians per millisecond)
     const waveSpeed = 0.001; // Adjust this to control wave flow speed
     
     const animate = () => {
       if (!this.animationActive) return;
+      
+      // Calculate phase once per animation cycle for efficiency
+      const cycleStartTime = Date.now();
       
       rect.transition()
         .duration(duration)
@@ -284,8 +289,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount * d3.easeSinInOut(t);
-            // Calculate phase based on total elapsed time for continuous flow
-            const elapsedTime = Date.now() - startTime;
+            // Calculate phase based on total elapsed time and current position in transition
+            const elapsedTime = (cycleStartTime - startTime) + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
@@ -296,8 +301,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount + (2 * oscillationAmount * d3.easeSinInOut(t));
-            // Calculate phase based on total elapsed time for continuous flow
-            const elapsedTime = Date.now() - startTime;
+            // Calculate phase based on total elapsed time and current position in transition
+            const elapsedTime = (cycleStartTime - startTime) + duration + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
