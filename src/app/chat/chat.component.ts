@@ -90,6 +90,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.diveForPearlsEvent.emit();
   }
 
+  setInput(text: string) {
+    this.userInput = text;
+  }
+
   private addSystemMessage(text: string) {
     this.messages.push({ type: 'system', text });
     this.shouldScrollToBottom = true;

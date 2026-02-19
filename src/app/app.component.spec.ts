@@ -181,4 +181,37 @@ describe('AppComponent', () => {
       });
     });
   });
+
+  it('gatherPearls should set chat input to joined text of checked pearls', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    app.clams = [
+      { pearls: [
+        { metric1: 1, metric2: 2, text: 'Alpha', checked: true },
+        { metric1: 3, metric2: 4, text: 'Beta', checked: false },
+      ]},
+      { pearls: [
+        { metric1: 5, metric2: 6, text: 'Gamma', checked: true },
+      ]},
+    ];
+    const chatComp = app.chatComponent;
+    app.gatherPearls();
+    expect(chatComp.userInput).toBe('Alpha\n\nGamma');
+  });
+
+  it('gatherPearls with no checked pearls should set chat input to empty string', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    app.clams = [
+      { pearls: [
+        { metric1: 1, metric2: 2, text: 'Alpha', checked: false },
+      ]},
+    ];
+    const chatComp = app.chatComponent;
+    chatComp.userInput = 'existing text';
+    app.gatherPearls();
+    expect(chatComp.userInput).toBe('');
+  });
 });

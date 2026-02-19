@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -47,6 +47,8 @@ export class AppComponent implements OnInit, OnDestroy {
   controlsVisible = false;
   pearlPanelVisible = false;
   clams: Clam[] = [];
+
+  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -521,6 +523,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   tossBack() {
     this.pearlPanelVisible = false;
+  }
+
+  gatherPearls() {
+    const texts = this.clams
+      .flatMap(clam => clam.pearls)
+      .filter(pearl => pearl.checked)
+      .map(pearl => pearl.text);
+    this.chatComponent.setInput(texts.join('\n\n'));
   }
 
   togglePearl(pearl: { checked: boolean }) {
