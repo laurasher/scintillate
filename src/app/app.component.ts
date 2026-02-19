@@ -17,6 +17,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
+  private glidingRectVisible = false; // Track if gliding rectangle is on screen
+  private glidingRect: any = null; // Reference to the gliding rectangle
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -62,7 +64,9 @@ export class AppComponent implements OnInit, OnDestroy {
     const svg = d3.select('#d3-container')
       .append('svg')
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
+      .style('cursor', 'pointer')
+      .on('click', () => this.onSvgClick());
 
     // Create defs for gradients
     const defs = svg.append('defs');
@@ -168,6 +172,25 @@ export class AppComponent implements OnInit, OnDestroy {
       // Animate the x position and width to create vacillating effect
       this.animateRightRectangle(rect, width, multiplier, rectWidth);
     }
+
+    // Create the gliding rectangle (narrow with rounded edges)
+    // Initially positioned hidden on the far left
+    const glidingWidth = rectWidth * 0.15; // 15% of base rectWidth (narrow)
+    const glidingHeight = height * 0.5; // 50% of screen height
+    const yPosition = (height - glidingHeight) / 2; // Center vertically
+    
+    this.glidingRect = svg.append('rect')
+      .attr('x', -glidingWidth - 50) // Start hidden off-screen to the left
+      .attr('y', yPosition)
+      .attr('width', glidingWidth)
+      .attr('height', glidingHeight)
+      .attr('rx', 20) // Rounded corners
+      .attr('ry', 20) // Rounded corners
+      .attr('fill', '#63A8AF')
+      .attr('opacity', 0.7)
+      .style('pointer-events', 'none'); // Don't interfere with click detection
+    
+    this.glidingRectVisible = false;
   }
 
   private animateLeftRectangle(rect: any, index: number, rectWidth: number) {
@@ -295,6 +318,36 @@ export class AppComponent implements OnInit, OnDestroy {
       this.animationSpeed = newSpeed;
       // Recreate visualization with new speed
       this.createVisualization();
+    }
+  }
+
+  private onSvgClick() {
+    if (!this.glidingRect) return;
+
+    const width = window.innerWidth;
+    const rectWidth = width * 0.1;
+    const glidingWidth = rectWidth * 0.15;
+
+    if (!this.glidingRectVisible) {
+      // Glide from left to between the rectangles on the right
+      const targetX = width - (3 * rectWidth) - glidingWidth - 30; // Position between left and right rectangles
+      
+      this.glidingRect
+        .transition()
+        .duration(1000)
+        .ease(d3.easeCubicInOut)
+        .attr('x', targetX);
+      
+      this.glidingRectVisible = true;
+    } else {
+      // Glide out to the right side
+      this.glidingRect
+        .transition()
+        .duration(1000)
+        .ease(d3.easeCubicInOut)
+        .attr('x', width + 50); // Off-screen to the right
+      
+      this.glidingRectVisible = false;
     }
   }
 }
