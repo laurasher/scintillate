@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import * as d3 from 'd3';
 import { ChatComponent } from './chat/chat.component';
@@ -30,7 +29,7 @@ interface Script {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ChatComponent],
+  imports: [RouterOutlet, ChatComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.less'
 })
@@ -522,6 +521,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   tossBack() {
     this.pearlPanelVisible = false;
+  }
+
+  togglePearl(pearl: { checked: boolean }) {
+    pearl.checked = !pearl.checked;
   }
 
   onSpeedChange(event: Event) {
