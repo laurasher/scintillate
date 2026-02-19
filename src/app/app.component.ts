@@ -259,7 +259,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private getTwoDifferentColors(): [string, string] {
-    // Guard: if we have fewer than 2 colors, return what we have
+    // Guard: handle edge case with fewer than 2 colors
+    // Note: In this application, we always have 6 colors, so this guard 
+    // is purely defensive. If it ever triggers, we return the same color
+    // twice, which creates a solid gradient (not ideal but safe).
     if (this.colors.length < 2) {
       const color = this.colors[0] || '#000000';
       return [color, color];
