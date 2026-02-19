@@ -222,7 +222,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private animateLeftRectangle(rect: any, index: number, rectWidth: number, height: number) {
     const baseWidth = index * rectWidth;
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
-    const baseDuration = 1500 + (index * 250); // Faster base speed, slightly different for each layer
+    const baseDuration = 3000 + (index * 500); // Duration for full oscillation cycle
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     // For seamless undulation, track elapsed time instead of discrete phase
@@ -236,26 +236,18 @@ export class AppComponent implements OnInit, OnDestroy {
       // Calculate phase once per animation cycle for efficiency
       const cycleStartTime = Date.now();
       
+      // Single continuous transition with sine wave oscillation
       rect.transition()
         .duration(duration)
-        .ease(d3.easeSinInOut)
+        .ease(d3.easeLinear) // Use linear easing for the oscillation calculation
         .attrTween('d', () => {
           return (t: number) => {
-            const currentWidth = baseWidth + oscillationAmount * d3.easeSinInOut(t);
+            // Use sine wave for smooth up-and-down oscillation
+            const oscillation = Math.sin(t * Math.PI * 2) * oscillationAmount;
+            const currentWidth = baseWidth + oscillation;
+            
             // Calculate phase based on total elapsed time and current position in transition
             const elapsedTime = (cycleStartTime - startTime) + (t * duration);
-            const currentPhase = elapsedTime * waveSpeed;
-            return this.createLeftWavyPath(currentWidth, height, currentPhase);
-          };
-        })
-        .transition()
-        .duration(duration)
-        .ease(d3.easeSinInOut)
-        .attrTween('d', () => {
-          return (t: number) => {
-            const currentWidth = baseWidth + oscillationAmount - (2 * oscillationAmount * d3.easeSinInOut(t));
-            // Calculate phase based on total elapsed time and current position in transition
-            const elapsedTime = (cycleStartTime - startTime) + duration + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
@@ -269,7 +261,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private animateRightRectangle(rect: any, width: number, multiplier: number, rectWidth: number, height: number) {
     const baseX = width - multiplier * rectWidth;
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
-    const baseDuration = 1500 + (multiplier * 250); // Faster base speed, slightly different for each layer
+    const baseDuration = 3000 + (multiplier * 500); // Duration for full oscillation cycle
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     
     // For seamless undulation, track elapsed time instead of discrete phase
@@ -283,26 +275,18 @@ export class AppComponent implements OnInit, OnDestroy {
       // Calculate phase once per animation cycle for efficiency
       const cycleStartTime = Date.now();
       
+      // Single continuous transition with sine wave oscillation
       rect.transition()
         .duration(duration)
-        .ease(d3.easeSinInOut)
+        .ease(d3.easeLinear) // Use linear easing for the oscillation calculation
         .attrTween('d', () => {
           return (t: number) => {
-            const currentX = baseX - oscillationAmount * d3.easeSinInOut(t);
+            // Use sine wave for smooth up-and-down oscillation
+            const oscillation = Math.sin(t * Math.PI * 2) * oscillationAmount;
+            const currentX = baseX - oscillation;
+            
             // Calculate phase based on total elapsed time and current position in transition
             const elapsedTime = (cycleStartTime - startTime) + (t * duration);
-            const currentPhase = elapsedTime * waveSpeed;
-            return this.createRightWavyPath(currentX, width, height, currentPhase);
-          };
-        })
-        .transition()
-        .duration(duration)
-        .ease(d3.easeSinInOut)
-        .attrTween('d', () => {
-          return (t: number) => {
-            const currentX = baseX - oscillationAmount + (2 * oscillationAmount * d3.easeSinInOut(t));
-            // Calculate phase based on total elapsed time and current position in transition
-            const elapsedTime = (cycleStartTime - startTime) + duration + (t * duration);
             const currentPhase = elapsedTime * waveSpeed;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
