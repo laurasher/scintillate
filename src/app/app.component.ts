@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const rectWidth = width * 0.1;
+    const rectWidth = width * 0.2;
 
     // Create SVG container
     const svg = d3.select('#d3-container')
@@ -144,7 +144,7 @@ export class AppComponent implements OnInit, OnDestroy {
     };
 
     // Create gradients for all rectangles
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       createGradient(`gradient${i}`, i);
     }
 
@@ -172,23 +172,6 @@ export class AppComponent implements OnInit, OnDestroy {
       if (i > 0) {
         this.animateLeftRectangle(rect, i, rectWidth, height);
       }
-    }
-
-    // Create 3 rectangles on the right side
-    for (let i = 0; i < 3; i++) {
-      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
-      const multiplier = 3 - i;
-      const xPosition = width - multiplier * rectWidth;
-      const rect = svg.append('path')
-        .attr('opacity', 0.3)
-        .attr('fill', `url(#gradient${i + 3})`)
-        .attr('filter', 'url(#edgeBlur)');
-      
-      // Set initial path with wavy left edge
-      rect.attr('d', this.createRightWavyPath(xPosition, width, height, 0));
-      
-      // Animate the x position and width to create vacillating effect
-      this.animateRightRectangle(rect, width, multiplier, rectWidth, height);
     }
   }
 
