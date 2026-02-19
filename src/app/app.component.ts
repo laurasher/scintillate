@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const rectWidth = width * 0.2;
+    const rectWidth = width * 0.15;
 
     // Create SVG container
     const svg = d3.select('#d3-container')
