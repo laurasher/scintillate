@@ -104,8 +104,8 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      // Randomly decide between 2-stop and 3-stop gradients (50% chance for each)
-      const use3Stops = Math.random() < 0.5;
+      // Randomly decide between 2-stop and 3-stop gradients (33% chance for 3-stop, 67% for 2-stop)
+      const use3Stops = Math.random() < 0.33;
 
       if (use3Stops) {
         const [color1, color2, color3] = this.getThreeDifferentColors();
