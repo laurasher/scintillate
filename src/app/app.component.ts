@@ -17,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
+  controlsVisible = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -437,6 +438,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private onResize() {
     this.createVisualization();
+  }
+
+  toggleControls() {
+    this.controlsVisible = !this.controlsVisible;
   }
 
   onSpeedChange(event: Event) {
