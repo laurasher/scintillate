@@ -222,7 +222,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private cycleGradientColors(gradientIndex: number) {
     // Stagger the start time for each gradient for visual variety
     const delay = gradientIndex * 1000; // 1 second stagger between gradients
-    const cycleDuration = 8000; // 8 seconds for smooth color transition
+    const cycleDuration = 3000; // 8 seconds for smooth color transition
     
     const timeoutId = setTimeout(() => {
       const animateColors = () => {
