@@ -181,7 +181,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Right edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 0.8 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
       const x = width + wave;
       path += ` L ${x},${y}`;
     }
@@ -203,7 +203,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Left edge (wavy)
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const wave = Math.sin((i / segments) * waveFrequency * Math.PI * 0.8 + wavePhase) * waveAmplitude;
+      const wave = Math.sin((i / segments) * waveFrequency * Math.PI / 1.5 + wavePhase) * waveAmplitude;
       const x = xPosition + wave;
       if (i === 0) {
         path += `M ${x},${y}`; // Start point
@@ -226,6 +226,9 @@ export class AppComponent implements OnInit, OnDestroy {
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     let wavePhase = 0;
     
+    // Phase increment per half-cycle for smooth wave flow with PI/1.5 multiplier
+    const phaseIncrement = Math.PI / 3;
+    
     const animate = () => {
       if (!this.animationActive) return;
       
@@ -238,7 +241,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = startPhase + t * 0.5;
+            const currentPhase = startPhase + t * phaseIncrement;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
@@ -248,13 +251,13 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount - (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = startPhase + 0.5 + t * 0.5;
+            const currentPhase = startPhase + phaseIncrement + t * phaseIncrement;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
         .on('end', () => {
-          // Update phase to continue smoothly from where we ended (keep within reasonable range)
-          wavePhase = (startPhase + 1.0) % (Math.PI * 0.8);
+          // Update phase to continue smoothly from where we ended
+          wavePhase = (startPhase + 2 * phaseIncrement) % (4 * Math.PI / 1.5);
           animate();
         });
     };
@@ -269,6 +272,9 @@ export class AppComponent implements OnInit, OnDestroy {
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
     let wavePhase = 0;
     
+    // Phase increment per half-cycle for smooth wave flow with PI/1.5 multiplier
+    const phaseIncrement = Math.PI / 3;
+    
     const animate = () => {
       if (!this.animationActive) return;
       
@@ -281,7 +287,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = startPhase + t * 0.5;
+            const currentPhase = startPhase + t * phaseIncrement;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
@@ -291,13 +297,13 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount + (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = startPhase + 0.5 + t * 0.5;
+            const currentPhase = startPhase + phaseIncrement + t * phaseIncrement;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
         .on('end', () => {
-          // Update phase to continue smoothly from where we ended (keep within reasonable range)
-          wavePhase = (startPhase + 1.0) % (Math.PI * 0.8);
+          // Update phase to continue smoothly from where we ended
+          wavePhase = (startPhase + 2 * phaseIncrement) % (4 * Math.PI / 1.5);
           animate();
         });
     };
