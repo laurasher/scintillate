@@ -1,8 +1,8 @@
 .chat-container {
     position: fixed;
     top: 3vh;
-    left: 33%;
-    width: 34%;
+    left: 55%;
+    width: 40%;
     height: 90vh;
     background: rgba(255, 255, 255, 0.75);
     border-radius: 16px;
@@ -84,6 +84,13 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
+.chat-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+}
+
 .chat-input {
     flex: 1;
     resize: none;
@@ -113,11 +120,30 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
-    align-self: flex-end;
-    margin-bottom: 2px;
 
     &:hover {
         background: #4d9097;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
+.chat-dive-btn {
+    padding: 8px 18px;
+    background: rgba(193, 154, 172, 0.85);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+
+    &:hover {
+        background: rgba(193, 154, 172, 1);
     }
 
     &:active {

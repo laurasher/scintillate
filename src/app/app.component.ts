@@ -17,8 +17,12 @@ export class AppComponent implements OnInit, OnDestroy {
   private colors = ['#CDC1D2', '#63A8AF', '#C19AAC', '#92B2BD', '#D8F6FE', '#BCB2B0'];
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
+  private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
+  private readonly DIVE_SPEED_MULTIPLIER = 2;
+  private svgRects: { rect: any; index: number; rectWidth: number; height: number }[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   controlsVisible = false;
+  pearlPanelVisible = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -37,6 +41,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // Clear any pending color cycle timeouts
     this.colorCycleTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
     this.colorCycleTimeouts = [];
+
+    // Clear pending dive-for-pearls timeout
+    if (this.diveForPearlsTimeout !== null) {
+      clearTimeout(this.diveForPearlsTimeout);
+      this.diveForPearlsTimeout = null;
+    }
     
     // Cancel any active D3 transitions
     if (isPlatformBrowser(this.platformId)) {
@@ -58,7 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const rectWidth = width * 0.1;
+    const rectWidth = width * 0.15;
 
     // Create SVG container
     const svg = d3.select('#d3-container')
@@ -145,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
     };
 
     // Create gradients for all rectangles
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       createGradient(`gradient${i}`, i);
     }
 
@@ -159,6 +169,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('fill', 'url(#backgroundGradient)');
 
     // Create 3 rectangles on the left side (widest to narrowest)
+    this.svgRects = [];
     for (let i = 3; i >= 0; i--) {
       const rect = svg.append('path')
         .attr('opacity', 0.3)
@@ -171,25 +182,9 @@ export class AppComponent implements OnInit, OnDestroy {
       
       // Animate the width to create vacillating effect (skip i=0 which has no width)
       if (i > 0) {
+        this.svgRects.push({ rect, index: i, rectWidth, height });
         this.animateLeftRectangle(rect, i, rectWidth, height);
       }
-    }
-
-    // Create 3 rectangles on the right side
-    for (let i = 0; i < 3; i++) {
-      // Calculate position and width multiplier (i=0 -> mult=3, i=1 -> mult=2, i=2 -> mult=1)
-      const multiplier = 3 - i;
-      const xPosition = width - multiplier * rectWidth;
-      const rect = svg.append('path')
-        .attr('opacity', 0.3)
-        .attr('fill', `url(#gradient${i + 3})`)
-        .attr('filter', 'url(#edgeBlur)');
-      
-      // Set initial path with wavy left edge
-      rect.attr('d', this.createRightWavyPath(xPosition, width, height, 0));
-      
-      // Animate the x position and width to create vacillating effect
-      this.animateRightRectangle(rect, width, multiplier, rectWidth, height);
     }
   }
 
@@ -441,8 +436,35 @@ export class AppComponent implements OnInit, OnDestroy {
     this.createVisualization();
   }
 
+  /** Restart only the undulation path animations at the current animationSpeed,
+   *  without touching the gradient colour cycles. */
+  private restartRectAnimations() {
+    for (const { rect, index, rectWidth, height } of this.svgRects) {
+      rect.interrupt();
+      this.animateLeftRectangle(rect, index, rectWidth, height);
+    }
+  }
+
   toggleControls() {
     this.controlsVisible = !this.controlsVisible;
+  }
+
+  onDiveForPearls() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const originalSpeed = this.animationSpeed;
+    this.animationSpeed = originalSpeed * this.DIVE_SPEED_MULTIPLIER;
+    this.restartRectAnimations();
+
+    this.diveForPearlsTimeout = setTimeout(() => {
+      this.diveForPearlsTimeout = null;
+      this.animationSpeed = originalSpeed;
+      this.restartRectAnimations();
+      this.pearlPanelVisible = true;
+    }, 5000);
+  }
+
+  tossBack() {
+    this.pearlPanelVisible = false;
   }
 
   onSpeedChange(event: Event) {

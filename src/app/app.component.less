@@ -23,11 +23,11 @@ body {
 .controls-wrapper {
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 98%;
+    transform: translateX(-100%);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
     z-index: 1000;
 }
@@ -138,6 +138,73 @@ body {
 
     &.arrow-up {
         transform: rotate(180deg);
+    }
+}
+
+.pearl-panel {
+    position: fixed;
+    top: 3vh;
+    left: -45%;
+    width: 38%;
+    height: 90vh;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    opacity: 0;
+    transition: left 0.9s ease, opacity 0.9s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    &.pearl-panel--visible {
+        left: 5%;
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.pearl-panel__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    text-align: center;
+}
+
+.pearl-panel__icon {
+    font-size: 64px;
+}
+
+.pearl-panel__text {
+    font-size: 16px;
+    font-style: italic;
+    color: #63A8AF;
+    margin: 0;
+}
+
+.pearl-panel__toss-btn {
+    margin-top: 8px;
+    padding: 10px 22px;
+    background: rgba(99, 168, 175, 0.15);
+    color: #63A8AF;
+    border: 1.5px solid rgba(99, 168, 175, 0.5);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+
+    &:hover {
+        background: rgba(99, 168, 175, 0.28);
+    }
+
+    &:active {
+        transform: scale(0.97);
     }
 }
   

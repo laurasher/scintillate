@@ -1,5 +1,14 @@
 <div id="d3-container"></div>
-<app-chat></app-chat>
+<div class="pearl-panel" [class.pearl-panel--visible]="pearlPanelVisible">
+  <div class="pearl-panel__inner">
+    <span class="pearl-panel__icon">🦪</span>
+    <p class="pearl-panel__text">A pearl rises from the deep…</p>
+    <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
+      Toss the rest back into the sea
+    </button>
+  </div>
+</div>
+<app-chat (diveForPearlsEvent)="onDiveForPearls()"></app-chat>
 <div class="controls-wrapper">
   <div class="controls" [class.controls-hidden]="!controlsVisible">
     <label for="speed-slider">Animation Speed</label>

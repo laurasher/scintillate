@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, PLATFORM_ID, Inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   private dialogueIndex = 0;
   private shouldScrollToBottom = false;
 
+  @Output() diveForPearlsEvent = new EventEmitter<void>();
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLElement>;
 
   constructor(
@@ -62,7 +63,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage() {
-    const text = this.userInput.trim();
+    const usingSuggestion = !this.userInput.trim();
+    const text = (this.userInput || this.suggestedResponse).trim();
     if (!text) return;
 
     this.messages.push({ type: 'user', text });
@@ -70,6 +72,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.shouldScrollToBottom = true;
 
     if (this.dialogues.length > 0) {
+      if (usingSuggestion) {
+        this.dialogueIndex++; // skip past the suggested dialogue
+      }
       const response = this.dialogues[this.dialogueIndex % this.dialogues.length];
       this.dialogueIndex++;
       setTimeout(() => {
@@ -83,6 +88,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       event.preventDefault();
       this.sendMessage();
     }
+  }
+
+  diveForPearls() {
+    this.diveForPearlsEvent.emit();
+  }
+
+  get suggestedResponse(): string {
+    return this.dialogues.length > 0
+      ? this.dialogues[this.dialogueIndex % this.dialogues.length]
+      : 'Type a message…';
   }
 
   private addSystemMessage(text: string) {
