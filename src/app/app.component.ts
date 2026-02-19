@@ -104,8 +104,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      const color1 = this.getRandomColor();
-      const color2 = this.getRandomColor();
+      const [color1, color2] = this.getTwoDifferentColors();
 
       gradient.append('stop')
         .attr('class', `stop-0-${index}`)
@@ -232,9 +231,8 @@ export class AppComponent implements OnInit, OnDestroy {
         const stop0 = d3.select(`.stop-0-${gradientIndex}`);
         const stop1 = d3.select(`.stop-1-${gradientIndex}`);
         
-        // Get new colors to transition to
-        const newColor1 = this.getRandomColor();
-        const newColor2 = this.getRandomColor();
+        // Get new colors to transition to (ensure they're different)
+        const [newColor1, newColor2] = this.getTwoDifferentColors();
         
         // Smoothly transition both gradient stops to new colors
         stop0.transition()
@@ -258,6 +256,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private getRandomColor(): string {
     return this.colors[Math.floor(Math.random() * this.colors.length)];
+  }
+
+  private getTwoDifferentColors(): [string, string] {
+    const color1 = this.getRandomColor();
+    let color2 = this.getRandomColor();
+    
+    // Keep selecting until we get a different color
+    while (color2 === color1) {
+      color2 = this.getRandomColor();
+    }
+    
+    return [color1, color2];
   }
 
   private onResize() {
