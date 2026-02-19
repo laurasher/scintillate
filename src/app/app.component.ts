@@ -334,8 +334,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const glidingWidth = rectWidth * 0.15;
 
     if (!this.glidingRectVisible) {
-      // Glide from left to between the rectangles on the right
-      const targetX = width - (3 * rectWidth) - glidingWidth - this.GLIDING_RECT_SPACING; // Position between left and right rectangles
+      // Glide from left to the center of the screen
+      const targetX = (width / 2) - (glidingWidth / 2); // Center the rectangle horizontally
       
       this.glidingRect
         .transition()
