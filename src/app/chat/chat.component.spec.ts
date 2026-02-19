@@ -65,6 +65,25 @@ describe('ChatComponent', () => {
     expect(fixture.componentInstance.messages[2].text).toBe('How can I help?');
   }));
 
+  it('should send suggestedResponse as user message when userInput is empty', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    // userInput is empty – clicking Send should use the suggestedResponse
+    fixture.componentInstance.userInput = '';
+    fixture.componentInstance.sendMessage();
+
+    expect(fixture.componentInstance.messages[1].type).toBe('user');
+    expect(fixture.componentInstance.messages[1].text).toBe('How can I help?');
+    expect(fixture.componentInstance.userInput).toBe('');
+
+    tick(400);
+    expect(fixture.componentInstance.messages[2].type).toBe('system');
+    expect(fixture.componentInstance.messages[2].text).toBe('Goodbye!');
+  }));
+
   it('should not send empty message', () => {
     const fixture = TestBed.createComponent(ChatComponent);
     fixture.detectChanges();
@@ -95,6 +114,38 @@ describe('ChatComponent', () => {
     expect(systemMessages[0].text).toBe('Hello there!');
     expect(systemMessages[1].text).toBe('How can I help?');
     expect(systemMessages[2].text).toBe('Goodbye!');
+  }));
+
+  it('should return fallback placeholder when dialogues are not loaded', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    httpMock.expectOne('assets/script.json');
+    // Dialogues not yet loaded
+    expect(fixture.componentInstance.suggestedResponse).toBe('Type a message…');
+  });
+
+  it('should return next dialogue as suggested response after script loads', () => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    // After init, dialogueIndex is 1, so next suggested response is dialogues[1]
+    expect(fixture.componentInstance.suggestedResponse).toBe('How can I help?');
+  });
+
+  it('should update suggested response after sending a message', fakeAsync(() => {
+    const fixture = TestBed.createComponent(ChatComponent);
+    fixture.detectChanges();
+    const req = httpMock.expectOne('assets/script.json');
+    req.flush(mockScript);
+
+    fixture.componentInstance.userInput = 'Hello';
+    fixture.componentInstance.sendMessage();
+    tick(400);
+
+    // dialogueIndex is now 2, so next suggested response is dialogues[2]
+    expect(fixture.componentInstance.suggestedResponse).toBe('Goodbye!');
   }));
 
   it('should show error message when script fails to load', () => {
