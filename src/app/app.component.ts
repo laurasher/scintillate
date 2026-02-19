@@ -259,6 +259,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private getTwoDifferentColors(): [string, string] {
+    // Guard: if we have fewer than 2 colors, return what we have
+    if (this.colors.length < 2) {
+      const color = this.colors[0] || '#000000';
+      return [color, color];
+    }
+    
     // Select first color
     const index1 = Math.floor(Math.random() * this.colors.length);
     const color1 = this.colors[index1];
