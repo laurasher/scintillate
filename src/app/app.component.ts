@@ -18,7 +18,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   private glidingRectVisible = false; // Track if gliding rectangle is on screen
-  private glidingRect: any = null; // Reference to the gliding rectangle
+  private glidingRect: d3.Selection<SVGRectElement, unknown, HTMLElement, unknown> | null = null; // Reference to the gliding rectangle
+  
+  // Constants for gliding rectangle positioning
+  private readonly GLIDING_RECT_SPACING = 30; // Spacing from rectangle group
+  private readonly OFF_SCREEN_OFFSET = 50; // Offset for hiding off-screen
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -180,7 +184,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const yPosition = (height - glidingHeight) / 2; // Center vertically
     
     this.glidingRect = svg.append('rect')
-      .attr('x', -glidingWidth - 50) // Start hidden off-screen to the left
+      .attr('x', -glidingWidth - this.OFF_SCREEN_OFFSET) // Start hidden off-screen to the left
       .attr('y', yPosition)
       .attr('width', glidingWidth)
       .attr('height', glidingHeight)
@@ -330,7 +334,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (!this.glidingRectVisible) {
       // Glide from left to between the rectangles on the right
-      const targetX = width - (3 * rectWidth) - glidingWidth - 30; // Position between left and right rectangles
+      const targetX = width - (3 * rectWidth) - glidingWidth - this.GLIDING_RECT_SPACING; // Position between left and right rectangles
       
       this.glidingRect
         .transition()
@@ -345,7 +349,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .transition()
         .duration(1000)
         .ease(d3.easeCubicInOut)
-        .attr('x', width + 50); // Off-screen to the right
+        .attr('x', width + this.OFF_SCREEN_OFFSET); // Off-screen to the right
       
       this.glidingRectVisible = false;
     }
