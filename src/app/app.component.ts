@@ -224,24 +224,25 @@ export class AppComponent implements OnInit, OnDestroy {
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
     const baseDuration = 1500 + (index * 250); // Faster base speed, slightly different for each layer
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
-    let wavePhase = 0;
     
-    // Phase increment per half-cycle for smooth wave flow with PI/1.5 multiplier
-    const phaseIncrement = Math.PI / 3;
+    // For seamless undulation, track elapsed time instead of discrete phase
+    let startTime = Date.now();
+    // Wave speed: determines how fast the wave pattern flows (radians per millisecond)
+    const waveSpeed = 0.001; // Adjust this to control wave flow speed
     
     const animate = () => {
       if (!this.animationActive) return;
-      
-      // Store the starting phase for this cycle
-      const startPhase = wavePhase;
       
       rect.transition()
         .duration(duration)
         .ease(d3.easeSinInOut)
         .attrTween('d', () => {
+          const transitionStartTime = Date.now();
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = startPhase + t * phaseIncrement;
+            // Calculate phase based on total elapsed time for continuous flow
+            const elapsedTime = Date.now() - startTime;
+            const currentPhase = elapsedTime * waveSpeed;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
@@ -251,15 +252,13 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentWidth = baseWidth + oscillationAmount - (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = startPhase + phaseIncrement + t * phaseIncrement;
+            // Calculate phase based on total elapsed time for continuous flow
+            const elapsedTime = Date.now() - startTime;
+            const currentPhase = elapsedTime * waveSpeed;
             return this.createLeftWavyPath(currentWidth, height, currentPhase);
           };
         })
-        .on('end', () => {
-          // Update phase to continue smoothly from where we ended
-          wavePhase = (startPhase + 2 * phaseIncrement) % (4 * Math.PI / 1.5);
-          animate();
-        });
+        .on('end', animate);
     };
     
     animate();
@@ -270,16 +269,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const oscillationAmount = rectWidth * 0.15; // 15% oscillation
     const baseDuration = 1500 + (multiplier * 250); // Faster base speed, slightly different for each layer
     const duration = baseDuration / this.animationSpeed; // Adjust by speed multiplier
-    let wavePhase = 0;
     
-    // Phase increment per half-cycle for smooth wave flow with PI/1.5 multiplier
-    const phaseIncrement = Math.PI / 3;
+    // For seamless undulation, track elapsed time instead of discrete phase
+    let startTime = Date.now();
+    // Wave speed: determines how fast the wave pattern flows (radians per millisecond)
+    const waveSpeed = 0.001; // Adjust this to control wave flow speed
     
     const animate = () => {
       if (!this.animationActive) return;
-      
-      // Store the starting phase for this cycle
-      const startPhase = wavePhase;
       
       rect.transition()
         .duration(duration)
@@ -287,7 +284,9 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount * d3.easeSinInOut(t);
-            const currentPhase = startPhase + t * phaseIncrement;
+            // Calculate phase based on total elapsed time for continuous flow
+            const elapsedTime = Date.now() - startTime;
+            const currentPhase = elapsedTime * waveSpeed;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
@@ -297,15 +296,13 @@ export class AppComponent implements OnInit, OnDestroy {
         .attrTween('d', () => {
           return (t: number) => {
             const currentX = baseX - oscillationAmount + (2 * oscillationAmount * d3.easeSinInOut(t));
-            const currentPhase = startPhase + phaseIncrement + t * phaseIncrement;
+            // Calculate phase based on total elapsed time for continuous flow
+            const elapsedTime = Date.now() - startTime;
+            const currentPhase = elapsedTime * waveSpeed;
             return this.createRightWavyPath(currentX, width, height, currentPhase);
           };
         })
-        .on('end', () => {
-          // Update phase to continue smoothly from where we ended
-          wavePhase = (startPhase + 2 * phaseIncrement) % (4 * Math.PI / 1.5);
-          animate();
-        });
+        .on('end', animate);
     };
     
     animate();
