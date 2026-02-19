@@ -20,11 +20,19 @@ body {
     display: block;
 }
 
-.controls {
+.controls-wrapper {
     position: fixed;
-    bottom: 30px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+}
+
+.controls {
     background: rgba(255, 255, 255, 0.9);
     padding: 20px 30px;
     border-radius: 12px;
@@ -32,8 +40,18 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
-    z-index: 1000;
     backdrop-filter: blur(10px);
+    overflow: hidden;
+    max-height: 100px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    opacity: 1;
+}
+
+.controls.controls-hidden {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 30px;
+    pointer-events: none;
 }
 
 .controls label {
@@ -89,5 +107,37 @@ body {
     color: #63A8AF;
     min-width: 40px;
     text-align: right;
+}
+
+.toggle-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.toggle-arrow {
+    font-size: 22px;
+    line-height: 1;
+    color: #63A8AF;
+    display: inline-block;
+    transition: transform 0.3s ease;
+    transform: rotate(0deg);
+
+    &.arrow-up {
+        transform: rotate(180deg);
+    }
 }
   

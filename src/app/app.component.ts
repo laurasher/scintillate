@@ -17,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private animationActive = true;
   private colorCycleTimeouts: number[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
+  controlsVisible = false;
   private glidingRectVisible = false; // Track if gliding rectangle is on screen
   private glidingRect: d3.Selection<SVGRectElement, unknown, HTMLElement, unknown> | null = null; // Reference to the gliding rectangle
   
@@ -465,6 +466,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private onResize() {
     this.createVisualization();
+  }
+
+  toggleControls() {
+    this.controlsVisible = !this.controlsVisible;
   }
 
   onSpeedChange(event: Event) {

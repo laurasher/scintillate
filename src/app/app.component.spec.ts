@@ -27,6 +27,50 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('#d3-container')).toBeTruthy();
   });
 
+  it('should have controlsVisible set to false by default', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.controlsVisible).toBeFalse();
+  });
+
+  it('should toggle controlsVisible when toggleControls is called', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.controlsVisible).toBeFalse();
+    app.toggleControls();
+    expect(app.controlsVisible).toBeTrue();
+    app.toggleControls();
+    expect(app.controlsVisible).toBeFalse();
+  });
+
+  it('should show toggle button in the DOM', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.toggle-btn')).toBeTruthy();
+  });
+
+  it('should apply controls-hidden class when controls are not visible', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const controls = compiled.querySelector('.controls');
+    expect(app.controlsVisible).toBeFalse();
+    expect(controls?.classList.contains('controls-hidden')).toBeTrue();
+  });
+
+  it('should remove controls-hidden class when controls are visible', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    app.toggleControls();
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const controls = compiled.querySelector('.controls');
+    expect(app.controlsVisible).toBeTrue();
+    expect(controls?.classList.contains('controls-hidden')).toBeFalse();
+  });
+
   it('should always return two different colors from getTwoDifferentColors', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
