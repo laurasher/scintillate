@@ -104,20 +104,42 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('x2', '0%')
         .attr('y2', '100%');
 
-      const [color1, color2] = this.getTwoDifferentColors();
+      // Randomly decide between 2-stop and 3-stop gradients (50% chance for each)
+      const use3Stops = Math.random() < 0.5;
 
-      gradient.append('stop')
-        .attr('class', `stop-0-${index}`)
-        .attr('offset', '0%')
-        .attr('stop-color', color1);
+      if (use3Stops) {
+        const [color1, color2, color3] = this.getThreeDifferentColors();
 
-      gradient.append('stop')
-        .attr('class', `stop-1-${index}`)
-        .attr('offset', '100%')
-        .attr('stop-color', color2);
+        gradient.append('stop')
+          .attr('class', `stop-0-${index}`)
+          .attr('offset', '0%')
+          .attr('stop-color', color1);
+
+        gradient.append('stop')
+          .attr('class', `stop-1-${index}`)
+          .attr('offset', '50%')
+          .attr('stop-color', color2);
+
+        gradient.append('stop')
+          .attr('class', `stop-2-${index}`)
+          .attr('offset', '100%')
+          .attr('stop-color', color3);
+      } else {
+        const [color1, color2] = this.getTwoDifferentColors();
+
+        gradient.append('stop')
+          .attr('class', `stop-0-${index}`)
+          .attr('offset', '0%')
+          .attr('stop-color', color1);
+
+        gradient.append('stop')
+          .attr('class', `stop-1-${index}`)
+          .attr('offset', '100%')
+          .attr('stop-color', color2);
+      }
       
       // Start color cycling animation for this gradient
-      this.cycleGradientColors(index);
+      this.cycleGradientColors(index, use3Stops);
     };
 
     // Create gradients for all rectangles
@@ -218,7 +240,7 @@ export class AppComponent implements OnInit, OnDestroy {
     animate();
   }
 
-  private cycleGradientColors(gradientIndex: number) {
+  private cycleGradientColors(gradientIndex: number, has3Stops: boolean = false) {
     // Stagger the start time for each gradient for visual variety
     const delay = gradientIndex * 1000; // 1 second stagger between gradients
     const cycleDuration = 3000; // 3 seconds for smooth color transition
@@ -231,20 +253,44 @@ export class AppComponent implements OnInit, OnDestroy {
         const stop0 = d3.select(`.stop-0-${gradientIndex}`);
         const stop1 = d3.select(`.stop-1-${gradientIndex}`);
         
-        // Get new colors to transition to (ensure they're different)
-        const [newColor1, newColor2] = this.getTwoDifferentColors();
-        
-        // Smoothly transition both gradient stops to new colors
-        stop0.transition()
-          .duration(cycleDuration)
-          .ease(d3.easeLinear)
-          .attr('stop-color', newColor1);
-        
-        stop1.transition()
-          .duration(cycleDuration)
-          .ease(d3.easeLinear)
-          .attr('stop-color', newColor2)
-          .on('end', animateColors); // Continue cycling after transition completes
+        if (has3Stops) {
+          const stop2 = d3.select(`.stop-2-${gradientIndex}`);
+          
+          // Get new colors to transition to (ensure they're different)
+          const [newColor1, newColor2, newColor3] = this.getThreeDifferentColors();
+          
+          // Smoothly transition all three gradient stops to new colors
+          stop0.transition()
+            .duration(cycleDuration)
+            .ease(d3.easeLinear)
+            .attr('stop-color', newColor1);
+          
+          stop1.transition()
+            .duration(cycleDuration)
+            .ease(d3.easeLinear)
+            .attr('stop-color', newColor2);
+          
+          stop2.transition()
+            .duration(cycleDuration)
+            .ease(d3.easeLinear)
+            .attr('stop-color', newColor3)
+            .on('end', animateColors); // Continue cycling after transition completes
+        } else {
+          // Get new colors to transition to (ensure they're different)
+          const [newColor1, newColor2] = this.getTwoDifferentColors();
+          
+          // Smoothly transition both gradient stops to new colors
+          stop0.transition()
+            .duration(cycleDuration)
+            .ease(d3.easeLinear)
+            .attr('stop-color', newColor1);
+          
+          stop1.transition()
+            .duration(cycleDuration)
+            .ease(d3.easeLinear)
+            .attr('stop-color', newColor2)
+            .on('end', animateColors); // Continue cycling after transition completes
+        }
       };
       
       animateColors();
@@ -281,6 +327,38 @@ export class AppComponent implements OnInit, OnDestroy {
     const color2 = this.colors[index2];
     
     return [color1, color2];
+  }
+
+  private getThreeDifferentColors(): [string, string, string] {
+    // Guard: handle edge case with fewer than 3 colors
+    if (this.colors.length < 3) {
+      const color = this.colors[0] || '#000000';
+      return [color, color, color];
+    }
+    
+    // Select first color
+    const index1 = Math.floor(Math.random() * this.colors.length);
+    const color1 = this.colors[index1];
+    
+    // Select second color from remaining colors
+    let index2 = Math.floor(Math.random() * (this.colors.length - 1));
+    if (index2 >= index1) {
+      index2++; // Skip the first color's index
+    }
+    const color2 = this.colors[index2];
+    
+    // Select third color from remaining colors (excluding both index1 and index2)
+    let index3 = Math.floor(Math.random() * (this.colors.length - 2));
+    // Adjust index3 to skip both already selected indices
+    if (index3 >= Math.min(index1, index2)) {
+      index3++;
+    }
+    if (index3 >= Math.max(index1, index2)) {
+      index3++;
+    }
+    const color3 = this.colors[index3];
+    
+    return [color1, color2, color3];
   }
 
   private onResize() {
