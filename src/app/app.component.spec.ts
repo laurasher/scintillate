@@ -11,6 +11,15 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
+  it('should render the HAPPY CLAM title element', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const title = compiled.querySelector('.app-title');
+    expect(title).toBeTruthy();
+    expect(title?.textContent?.trim()).toBe('HAPPY CLAM');
+  });
+
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
