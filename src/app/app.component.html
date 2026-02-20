@@ -9,7 +9,10 @@
     <div class="pearl-panel__clams">
       @for (clam of clams; track $index) {
         <div class="clam">
-          <div class="clam__header" title="Description of the attributes of each clam.">🦪 Clam {{ $index + 1 }}</div>
+          <div class="clam__header" title="Description of the attributes of each clam.">
+            🦪 Clam {{ $index + 1 }}
+            <span class="clam__tooltip">Description of the attributes of each clam.</span>
+          </div>
           <div class="clam__pearls">
             @for (pearl of clam.pearls; track $index) {
               <div class="pearl" (click)="togglePearl(pearl)">
