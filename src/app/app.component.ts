@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private colorCycleTimeouts: number[] = [];
   private diveForPearlsTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly DIVE_SPEED_MULTIPLIER = 2.6;
-  private svgRects: { rect: any; index: number; rectWidth: number; height: number }[] = [];
+  private svgRects: { rect: any; index: number; rectWidth: number; height: number; width: number }[] = [];
   private dialogues: string[] = [];
   animationSpeed = 2; // Default speed multiplier (1 = normal, 2 = faster, 0.5 = slower)
   controlsVisible = false;
@@ -206,7 +206,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .attr('height', height)
       .attr('fill', 'url(#backgroundGradient)');
 
-    // Create 3 rectangles on the left side (widest to narrowest)
+    // Create 3 rectangles on the right side (widest to narrowest)
     this.svgRects = [];
     for (let i = 3; i >= 0; i--) {
       const rect = svg.append('path')
@@ -214,14 +214,14 @@ export class AppComponent implements OnInit, OnDestroy {
         .attr('fill', `url(#gradient${i})`)
         .attr('filter', 'url(#edgeBlur)');
       
-      // Set initial path with wavy right edge
-      const initialWidth = i * rectWidth;
-      rect.attr('d', this.createLeftWavyPath(initialWidth, height, 0));
+      // Set initial path with wavy left edge
+      const initialX = width - i * rectWidth;
+      rect.attr('d', this.createRightWavyPath(initialX, width, height, 0));
       
       // Animate the width to create vacillating effect (skip i=0 which has no width)
       if (i > 0) {
-        this.svgRects.push({ rect, index: i, rectWidth, height });
-        this.animateLeftRectangle(rect, i, rectWidth, height);
+        this.svgRects.push({ rect, index: i, rectWidth, height, width });
+        this.animateRightRectangle(rect, width, i, rectWidth, height);
       }
     }
   }
@@ -477,9 +477,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Restart only the undulation path animations at the current animationSpeed,
    *  without touching the gradient colour cycles. */
   private restartRectAnimations() {
-    for (const { rect, index, rectWidth, height } of this.svgRects) {
+    for (const { rect, index, rectWidth, height, width } of this.svgRects) {
       rect.interrupt();
-      this.animateLeftRectangle(rect, index, rectWidth, height);
+      this.animateRightRectangle(rect, width, index, rectWidth, height);
     }
   }
 
