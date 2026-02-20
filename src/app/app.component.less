@@ -176,6 +176,11 @@ body {
     box-sizing: border-box;
     overflow-y: auto;
     max-height: calc(90vh - 40px);
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .pearl-panel__clams {
@@ -210,6 +215,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 
 .pearl__metrics {
