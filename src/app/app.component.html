@@ -2,31 +2,42 @@
 <div class="app-title">HAPPY CLAM</div>
 <div class="pearl-panel" [class.pearl-panel--visible]="pearlPanelVisible">
   <div class="pearl-panel__inner">
+    <div class="pearl-panel__heading">
+      <div class="pearl-panel__title">Consult the clams</div>
+      <div class="pearl-panel__subtitle">Select which pearls you would like to gather into your response based on each clam's opinion and each pearl's metrics.</div>
+    </div>
     <div class="pearl-panel__clams">
       @for (clam of clams; track $index) {
         <div class="clam">
-          <div class="clam__header">🦪 Clam {{ $index + 1 }}</div>
-          @for (pearl of clam.pearls; track $index) {
-            <div class="pearl" (click)="togglePearl(pearl)">
-              <div class="pearl__metrics">
-                <span class="pearl__metric">{{pearl.metric1}}</span>
-                <span class="pearl__metric">{{pearl.metric2}}</span>
+          <div class="clam__header" title="Description of the attributes of each clam.">
+            🦪 Clam {{ $index + 1 }}
+            <span class="clam__tooltip">Description of the attributes of each clam.</span>
+          </div>
+          <div class="clam__pearls">
+            @for (pearl of clam.pearls; track $index) {
+              <div class="pearl" (click)="togglePearl(pearl)">
+                <div class="pearl__metrics">
+                  <span class="pearl__metric">{{pearl.metric1}}</span>
+                  <span class="pearl__metric">{{pearl.metric2}}</span>
+                </div>
+                <div class="pearl__text-row">
+                  <input type="checkbox" class="pearl__checkbox" [checked]="pearl.checked" (change)="togglePearl(pearl)" (click)="$event.stopPropagation()" aria-label="Select pearl" />
+                  <span class="pearl__text">{{pearl.text}}</span>
+                </div>
               </div>
-              <div class="pearl__text-row">
-                <input type="checkbox" class="pearl__checkbox" [checked]="pearl.checked" (change)="togglePearl(pearl)" (click)="$event.stopPropagation()" aria-label="Select pearl" />
-                <span class="pearl__text">{{pearl.text}}</span>
-              </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       }
     </div>
-    <button class="pearl-panel__gather-btn" (click)="gatherPearls()" aria-label="Gather my pearls">
-      Gather my pearls
-    </button>
-    <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
-      Toss the rest back into the sea
-    </button>
+    <div class="pearl-panel__btn-row">
+      <button class="pearl-panel__gather-btn" (click)="gatherPearls()" aria-label="Gather my pearls">
+        Gather my pearls
+      </button>
+      <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
+        Toss the rest back into the sea
+      </button>
+    </div>
   </div>
 </div>
 <app-chat (diveForPearlsEvent)="onDiveForPearls()" (messageSentEvent)="onMessageSent()"></app-chat>
