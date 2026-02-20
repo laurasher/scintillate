@@ -192,10 +192,20 @@ body {
     overflow-y: auto;
     // max-height: calc(90vh - 40px);
     max-height: calc(90vh);
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 168, 175, 0.4) transparent;
 
     &::-webkit-scrollbar {
-        display: none;
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(99, 168, 175, 0.4);
+        border-radius: 3px;
     }
 }
 
@@ -211,19 +221,16 @@ body {
     border-radius: 10px;
     padding: 12px;
     display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .clam__header {
     font-size: 13px;
     font-weight: 700;
     color: #63A8AF;
+    margin-bottom: 4px;
     letter-spacing: 0.03em;
-    writing-mode: vertical-lr;
-    text-align: center;
-    flex-shrink: 0;
 }
 
 .clam__pearls {
@@ -287,6 +294,26 @@ body {
     -webkit-box-orient: vertical;
 }
 
+.pearl-panel__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pearl-panel__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #63A8AF;
+    letter-spacing: 0.03em;
+}
+
+.pearl-panel__subtitle {
+    font-size: 11px;
+    font-style: italic;
+    color: #777;
+    line-height: 1.4;
+}
+
 .pearl-panel__btn-row {
     display: flex;
     gap: 8px;
@@ -295,7 +322,7 @@ body {
 .pearl-panel__gather-btn {
     flex: 1;
     padding: 10px 22px;
-    background: #63A8AF;
+    background: rgba(193, 154, 172, 0.85);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -306,7 +333,7 @@ body {
     white-space: nowrap;
 
     &:hover {
-        background: #4e8f96;
+        background: rgba(193, 154, 172, 1);
     }
 
     &:active {

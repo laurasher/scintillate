@@ -2,6 +2,10 @@
 <div class="app-title">HAPPY CLAM</div>
 <div class="pearl-panel" [class.pearl-panel--visible]="pearlPanelVisible">
   <div class="pearl-panel__inner">
+    <div class="pearl-panel__heading">
+      <div class="pearl-panel__title">Consult the clams</div>
+      <div class="pearl-panel__subtitle">Select which pearls you would like to gather into your response based on each clam's opinion and each pearl's metrics.</div>
+    </div>
     <div class="pearl-panel__clams">
       @for (clam of clams; track $index) {
         <div class="clam">
