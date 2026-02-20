@@ -6,18 +6,20 @@
       @for (clam of clams; track $index) {
         <div class="clam">
           <div class="clam__header">🦪 Clam {{ $index + 1 }}</div>
-          @for (pearl of clam.pearls; track $index) {
-            <div class="pearl" (click)="togglePearl(pearl)">
-              <div class="pearl__metrics">
-                <span class="pearl__metric">{{pearl.metric1}}</span>
-                <span class="pearl__metric">{{pearl.metric2}}</span>
+          <div class="clam__pearls">
+            @for (pearl of clam.pearls; track $index) {
+              <div class="pearl" (click)="togglePearl(pearl)">
+                <div class="pearl__metrics">
+                  <span class="pearl__metric">{{pearl.metric1}}</span>
+                  <span class="pearl__metric">{{pearl.metric2}}</span>
+                </div>
+                <div class="pearl__text-row">
+                  <input type="checkbox" class="pearl__checkbox" [checked]="pearl.checked" (change)="togglePearl(pearl)" (click)="$event.stopPropagation()" aria-label="Select pearl" />
+                  <span class="pearl__text">{{pearl.text}}</span>
+                </div>
               </div>
-              <div class="pearl__text-row">
-                <input type="checkbox" class="pearl__checkbox" [checked]="pearl.checked" (change)="togglePearl(pearl)" (click)="$event.stopPropagation()" aria-label="Select pearl" />
-                <span class="pearl__text">{{pearl.text}}</span>
-              </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       }
     </div>
