@@ -9,7 +9,7 @@
     <div class="pearl-panel__clams">
       @for (clam of clams; track $index) {
         <div class="clam">
-          <div class="clam__header">🦪 Clam {{ $index + 1 }}</div>
+          <div class="clam__header" title="Description of the attributes of each clam.">🦪 Clam {{ $index + 1 }}</div>
           <div class="clam__pearls">
             @for (pearl of clam.pearls; track $index) {
               <div class="pearl" (click)="togglePearl(pearl)">
@@ -28,11 +28,11 @@
       }
     </div>
     <div class="pearl-panel__btn-row">
-      <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
-        Toss the rest back into the sea
-      </button>
       <button class="pearl-panel__gather-btn" (click)="gatherPearls()" aria-label="Gather my pearls">
         Gather my pearls
+      </button>
+      <button class="pearl-panel__toss-btn" (click)="tossBack()" aria-label="Toss the rest back into the sea">
+        Toss the rest back into the sea
       </button>
     </div>
   </div>
